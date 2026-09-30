@@ -22,6 +22,13 @@
     });
   });
 
+  /* Guido (30/09): el chat va solo en esa esquina. El botón flotante de WhatsApp del tema (a.btn-whatsapp,
+     sale de store.whatsapp) quedaba tapado abajo, así que se oculta acá. Los links de contacto del footer
+     no usan esta clase y no se tocan. Para sacarlo de raíz: borrar el WhatsApp en la configuración de la tienda. */
+  var css = document.createElement('style');
+  css.textContent = 'a.btn-whatsapp{display:none!important}';
+  document.head.appendChild(css);
+
   var s = document.createElement('script');
   s.src = 'https://unpkg.com/@developer.notchatbot/webchat@latest/dist/webchat-bundle.min.umd.cjs';
   s.async = true;
