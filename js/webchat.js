@@ -32,6 +32,22 @@
   css.textContent = 'a.btn-whatsapp{display:none!important}';
   document.head.appendChild(css);
 
+  /* Guido (30/09): en el menú que se despliega, primero el chat y abajo WhatsApp.
+     El widget los apila en una columna dentro de su shadow DOM, así que se da vuelta el orden ahí adentro.
+     Si el proveedor cambia sus clases, la regla deja de aplicar y vuelve el orden de ellos: no rompe nada. */
+  var intentos = 0;
+  var reloj = setInterval(function () {
+    var caja = document.getElementById('webchat-notchatbot');
+    var raiz = caja && caja.shadowRoot;
+    if (raiz && !raiz.getElementById('dg-orden-botones')) {
+      var orden = document.createElement('style');
+      orden.id = 'dg-orden-botones';
+      orden.textContent = '.nbc-fixed.nbc-flex-col.nbc-gap-4{flex-direction:column-reverse}';
+      raiz.appendChild(orden);
+    }
+    if ((raiz && raiz.getElementById('dg-orden-botones')) || ++intentos > 60) clearInterval(reloj);
+  }, 500);
+
   var s = document.createElement('script');
   s.src = 'https://unpkg.com/@developer.notchatbot/webchat@latest/dist/webchat-bundle.min.umd.cjs';
   s.async = true;
