@@ -19,7 +19,9 @@
       desktop: { position: 'bottom-right', marginBottom: 20, marginSide: 20, showPopup: true },
       /* 10px lo dejaba encima de la barra fija de "Agregar al carrito" (74px de alto): sube por arriba */
       mobile: { position: 'bottom-right', marginBottom: 92, marginSide: 10, showPopup: true },
-      closeButtonIcon: 'default'
+      closeButtonIcon: 'default',
+      /* 30/09: el proveedor sumó su propio botón de WhatsApp dentro del widget (lo pidió Guido) */
+      whatsapp: { phoneNumber: '5493413349022', color: '#25D366', active: true }
     });
   });
 
