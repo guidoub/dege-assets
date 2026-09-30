@@ -17,7 +17,8 @@
       quickReplies: ['Tengo una duda con mi pedido.', 'Quiero hacer una compra!', 'Donde esta mi pedido?'],
       primaryColor: '#7F7F46',
       desktop: { position: 'bottom-right', marginBottom: 20, marginSide: 20, showPopup: true },
-      mobile: { position: 'bottom-right', marginBottom: 10, marginSide: 10, showPopup: true },
+      /* 10px lo dejaba encima de la barra fija de "Agregar al carrito" (74px de alto): sube por arriba */
+      mobile: { position: 'bottom-right', marginBottom: 92, marginSide: 10, showPopup: true },
       closeButtonIcon: 'default'
     });
   });
