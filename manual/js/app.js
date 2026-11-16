@@ -1,12 +1,12 @@
 // Manual de armado DEGË · interfaz
 // Carga el producto (?p=mesa-ratona por defecto), arma las escenas con el motor 3D y maneja todo el recorrido:
 // portada → «Antes de arrancar» → pasos (con dos tiempos cuando hay herrajes) → cierre → reseña.
-import { Motor } from "./motor3d.js?v=b1713398f9";
-import { IC, GRUPO_IC } from "./iconos.js?v=b1713398f9";
+import { Motor } from "./motor3d.js?v=3c7a40cf6b";
+import { IC, GRUPO_IC } from "./iconos.js?v=3c7a40cf6b";
 
 const qs = new URLSearchParams(location.search);
 const ID = (qs.get("p") || "ch29").replace(/[^a-z0-9-]/g, "");
-const P = (await import(`../productos/${ID}.js?v=b1713398f9`)).default;
+const P = (await import(`../productos/${ID}.js?v=3c7a40cf6b`)).default;
 const T = P.textos, S = P.escenas, N = S.length, LAST = N - 1, STEPS = N - 2;
 const KEY = "dege:manual:" + P.id;
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;

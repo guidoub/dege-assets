@@ -4,12 +4,12 @@ const CHAPA = 2.5, PATA_PL = 12, L_PIE = 90, L_CANO = 265, R_CANO = 12.5;
 const Z_ABAJO = PATA_PL + L_PIE;                     // 102
 const Z_ARRIBA = Z_ABAJO + CHAPA + L_CANO;           // 369,5
 const ALTO = Z_ARRIBA + CHAPA + 3;                   // ≈ 37,5 cm
-const TH = 155 * Math.PI / 180, RL = 207;            // patas de las puntas: sobre la curva, apenas hacia un lado
+const RL = 207;
 const PATAS = {
-  izq: [A + RL * Math.cos(Math.PI - TH), RL * Math.sin(Math.PI - TH)],        // punta izquierda (en pantalla), adelante
-  centroA: [-70, RL],                                                          // medio, adelante
-  centroT: [70, -RL],                                                          // medio, atrás
-  der: [-(A + RL * Math.cos(Math.PI - TH)), -RL * Math.sin(Math.PI - TH)],     // punta derecha, atrás
+  izq: [A + RL, 0],          // punta izquierda (en pantalla)
+  centroA: [0, RL],          // medio, adelante
+  centroT: [0, -RL],         // medio, atrás: alineada con la de adelante
+  der: [-(A + RL), 0],       // punta derecha
 };
 const K = Object.keys(PATAS);
 

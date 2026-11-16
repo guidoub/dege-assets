@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=b1713398f9';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=3c7a40cf6b';
 
 const W = 670, D = 450, E = 15, Z1 = 72, Z2 = 345;             // tablas de 15 mm (MDP); estante a 7,2 cm, tapa a 34,5
 const P = { a: [300, 190], b: [-300, 190], c: [300, -190], d: [-300, -190] }, K = Object.keys(P);

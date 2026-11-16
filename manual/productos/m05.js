@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=b1713398f9';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=3c7a40cf6b';
 
 const W = 680, D = 300, E = 15, H = 1670;
 const P = { fi: [315, 125], fd: [-315, 125], ti: [315, -125], td: [-315, -125] }, K = Object.keys(P);
@@ -42,7 +42,7 @@ export default {
   materiales: MATS('#232323', { madera: { color: '#C99A5E' } }),
   inventario: [{ id: 'C', n: 4, label: 'C · Regatones' }, { id: 'B', n: 6, label: 'B · Espárragos' }, { id: 'A', n: 4, label: 'A · Tornillos Allen' }, { id: 'D', n: 2, label: 'D · Ganchos' }],
   textos: textos({
-    nombre: 'Perchero industrial', codigo: 'M05', cabecera: 'Perchero industrial M05', sust: 'perchero', art: 'el',
+    nombre: 'Perchero industrial con banco', codigo: 'M05', cabecera: 'Perchero con banco M05', sust: 'perchero', art: 'el',
     ladoCuerpo: 'Un banco de dos niveles y un poste con ganchos atrás. Seguí los pasos y girá el modelo para ver cada unión.',
     datos: [['layers', '12 piezas', '+ 16 herrajes'], ['steps', `${NA} pasos`, 'llave incluida'], ['box', '68 × 30 × 167', 'cm · ancho, fondo y alto']],
     momTitulo: 'Tu perchero,<br><em>de abajo hacia arriba</em>', momCuerpo: 'Primero el banco y después el poste con los ganchos. La llave viene en la caja.',

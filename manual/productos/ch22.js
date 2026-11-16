@@ -1,5 +1,5 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, cil, perfil } from './_estimado.js?v=b1713398f9';
-import { mesa3 } from './_tres_patas.js?v=b1713398f9';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, cil, perfil } from './_estimado.js?v=3c7a40cf6b';
+import { mesa3 } from './_tres_patas.js?v=3c7a40cf6b';
 
 const TAPA = gota(880, 570);
 const M = mesa3({ pre: 'g', contorno: TAPA, patas: { 1: [300, 165], 2: [-350, 0], 3: [170, -195] }, alto: 340 });

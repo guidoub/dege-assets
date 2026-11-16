@@ -5,12 +5,12 @@ const NIV = 5;                           // 5 chapas, 33 cm entre estantes
 const ZC = Array.from({ length: NIV }, (_, i) => PATA_PL + L_CORTO + i * (CHAPA + L_LARGO));  // 102, 429,5, 757, 1084,5, 1412
 const ZTOP = ZC[NIV - 1];
 const ALTO = ZTOP + CHAPA + 3;           // ≈ 142 cm
-const TH = 150 * Math.PI / 180, RL = 142;
+const RL = 142;
 const PATAS = {
-  izq: [A + RL * Math.cos(Math.PI - TH), RL * Math.sin(Math.PI - TH)],      // punta izquierda (en pantalla), adelante
-  centroA: [70, RL],                                                         // medio, adelante
-  centroT: [-70, -RL],                                                       // medio, atrás
-  der: [-(A + RL * Math.cos(Math.PI - TH)), -RL * Math.sin(Math.PI - TH)],   // punta derecha, atrás
+  izq: [A + RL, 0],          // punta izquierda (en pantalla)
+  centroA: [0, RL],          // medio, adelante
+  centroT: [0, -RL],         // medio, atrás: alineada con la de adelante
+  der: [-(A + RL), 0],       // punta derecha
 };
 const K = Object.keys(PATAS);
 
@@ -119,7 +119,7 @@ export default {
     ladoNota: 'Abrilo desde el celu y tenelo al lado mientras armás.',
     teclaSig: 'Siguiente paso', teclaAnt: 'Paso anterior', teclaGirar: 'Arrastrá la biblioteca para girarla', girar: 'Arrastrá para girar la biblioteca',
     portadaKicker: 'Manual de armado', portadaTitulo: 'Armá tu <em>biblioteca</em>, paso a paso',
-    datos: [['layers', '25 piezas', '+ 24 herrajes'], ['steps', '7 pasos', 'el 2 se repite 4 veces'], ['box', '80 × 27 × 142', 'cm · ancho, fondo y alto']],
+    datos: [['layers', '25 piezas', '+ 24 herrajes'], ['steps', '7 pasos', 'el 5 se hace 2 veces'], ['box', '80 × 27 × 142', 'cm · ancho, fondo y alto']],
     retomarA: '¿Ya habías empezado?', retomarB: 'Seguí en el paso',
     momKicker: 'Antes de arrancar', momTitulo: 'Tu biblioteca,<br><em>estante por estante</em>', momCuerpo: 'Es el mismo paso repetido cuatro veces. Todo se enrosca a mano; la llave Allen viene en la caja.',
     momTips: [

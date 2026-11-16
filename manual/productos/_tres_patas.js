@@ -1,4 +1,4 @@
-import { cil, perfil, agujero, barra, regaton, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=b1713398f9';
+import { cil, perfil, agujero, barra, regaton, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=3c7a40cf6b';
 
 const R_BARRA = 6;
 export const H_AGUJERO = { 1: 110, 3: 190 };   // altura del agujero de cada caño, desde la punta de abajo

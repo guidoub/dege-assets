@@ -1,4 +1,4 @@
-import { cumo } from './_cumo.js?v=b1713398f9';
+import { cumo } from './_cumo.js?v=3c7a40cf6b';
 export default cumo({
   id: 'sc03-vertical', codigo: 'SC03', nombre: 'Estantería vertical', cabecera: 'Estantería vertical', sust: 'estantería', art: 'la',
   tienda: 'https://dege.com.ar/productos/estanteria-vertical/', celdas: [[0, 0], [0, 1], [0, 2]], medidas: { w: 38.7, h: 111 },

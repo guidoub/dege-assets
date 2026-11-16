@@ -1,4 +1,4 @@
-import { cumo } from './_cumo.js?v=b1713398f9';
+import { cumo } from './_cumo.js?v=3c7a40cf6b';
 export default cumo({
   id: 'sc03-rack', codigo: 'SC03', nombre: 'Rack de TV', cabecera: 'Rack de TV', sust: 'rack', art: 'el',
   tienda: 'https://dege.com.ar/productos/rack-de-tv-estanteria-horizontal/', celdas: [[0, 0], [-1, 0], [-2, 0]], medidas: { w: 111, h: 38.7 },

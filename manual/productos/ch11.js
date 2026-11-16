@@ -5,12 +5,12 @@ const Z1 = PATA_PL + L_CORTO;            // 102: chapa de abajo
 const Z2 = Z1 + CHAPA + L_LARGO;         // 819,5: estante de arriba
 const Z3 = Z2 + CHAPA + L_CORTO;         // 912: tapa
 const ALTO = Z3 + CHAPA + 3;             // ≈ 92 cm
-const TH = 150 * Math.PI / 180, RL = 132;
+const RL = 132;
 const PATAS = {
-  izq: [A + RL * Math.cos(Math.PI - TH), RL * Math.sin(Math.PI - TH)],      // punta izquierda (en pantalla), adelante
-  centroA: [70, RL],                                                         // medio, adelante (apenas a la izquierda del centro, como en el dibujo de medidas)
-  centroT: [-70, -RL],                                                       // medio, atrás
-  der: [-(A + RL * Math.cos(Math.PI - TH)), -RL * Math.sin(Math.PI - TH)],   // punta derecha, atrás
+  izq: [A + RL, 0],          // punta izquierda (en pantalla)
+  centroA: [0, RL],          // medio, adelante
+  centroT: [0, -RL],         // medio, atrás: alineada con la de adelante
+  der: [-(A + RL), 0],       // punta derecha
 };
 const K = Object.keys(PATAS);
 

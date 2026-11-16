@@ -11,7 +11,7 @@ const LADOS = [['izq', 1], ['der', -1]];  // nombre visto desde adelante (con la
 const NIVELES = [['arriba', 1], ['abajo', -1]];
 const zN = (sz, z) => (sz > 0 ? z : ALTO - z); // espeja alturas para la esquina/caño de abajo
 
-const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 16, ...extra });
+const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 24, ...extra });
 
 const L_CANO = 2 * (E - T);                       // 33,6 cm
 const Z_TECHO = ALTO - T - R, Z_PISO = T + R;     // centros de los caños de techo y piso
@@ -19,28 +19,34 @@ const X_COST = E - T - R;                         // centro de los caños de los
 const canosH = (nivel, sz) => YA.map((y, k) => cil(`c.${nivel}.${k}`, [-(E - T), y, sz > 0 ? Z_TECHO : Z_PISO], L_CANO, R, 'chapa', { eje: [1, 0, 0] }));
 const canosV = (lado, sx) => YB.map((y, k) => cil(`c.${lado}.${k}`, [sx * X_COST, y, T], ALTO - 2 * T, R));
 
+const F = 6, RT = 7.5, BC = T + R;   // ancho del lomo, radio de la lengüeta, distancia de la arista al eje del caño
+function alaContorno(centros) {
+  const pts = [[-PROF / 2, 0], [PROF / 2, 0], [PROF / 2, F]];
+  for (const a of [...centros].sort((m, n) => n - m)) {
+    pts.push([a + RT, F]);
+    for (let i = 0; i <= 14; i++) { const t = (Math.PI * i) / 14; pts.push([a + RT * Math.cos(t), BC + RT * Math.sin(t)]); }
+    pts.push([a - RT, F]);
+  }
+  pts.push([-PROF / 2, F]);
+  return pts;
+}
+const HUECO = 4.2;
 function esquina(nivel, sz, lado, sx) {
-  const id = `e.${nivel}.${lado}`, d = 7;
-  const zTop = ALTO, zDiente = ALTO - T - 2 * R - 3; // los dientes verticales cubren la punta del caño
-  const v = [[-PROF / 2, zTop - 4]];
-  for (const y of YA) v.push([y - d, zTop - 4], [y - d, zDiente], [y + d, zDiente], [y + d, zTop - 4]);
-  v.push([PROF / 2, zTop - 4], [PROF / 2, zTop], [-PROF / 2, zTop]);
-  const vz = v.map(([y, z]) => [y, zN(sz, z)]);
+  const id = `e.${nivel}.${lado}`;
+  const v = alaContorno(YA).map(([a, b]) => [-zN(sz, ALTO - b), a]);
   const xV = sx > 0 ? E - T : -E;
-  const xDiente = T + 2 * R + 3;
-  const h = [[0, -PROF / 2]];
-  for (const y of YB) h.push([4, y - d], [xDiente, y - d], [xDiente, y + d], [4, y + d]);
-  h.push([4, PROF / 2], [0, PROF / 2]);
-  const hxy = h.map(([x, y]) => [sx * (E - x), y]);
+  const h = alaContorno(YB).map(([a, b]) => [sx * (E - b), a]);
   const zH = sz > 0 ? ALTO - T : 0;
   return [
-    { id: id + '.v', tipo: 'perfil', puntos: vz.map(([y, z]) => [-z, y]), pos: [xV, 0, 0], eje: [1, 0, 0], z0: 0, z1: T, mat: 'chapa' },
-    { id: id + '.h', tipo: 'perfil', puntos: sx > 0 ? hxy : [...hxy].reverse(), pos: [0, 0, zH], z0: 0, z1: T, mat: 'chapa' },
+    { id: id + '.v', tipo: 'perfil', puntos: v, pos: [xV, 0, 0], eje: [1, 0, 0], z0: 0, z1: T, mat: 'chapa',
+      huecos: YA.map((y) => ({ x: -zN(sz, ALTO - BC), y, w: HUECO, d: HUECO, r: HUECO / 2 })) },
+    { id: id + '.h', tipo: 'perfil', puntos: sx > 0 ? h : [...h].reverse(), pos: [0, 0, zH], z0: 0, z1: T, mat: 'chapa',
+      huecos: YB.map((y) => ({ x: sx * (E - BC), y, w: HUECO, d: HUECO, r: HUECO / 2 })) },
   ];
 }
 
 const tornillo = (id, pos, haciaAfuera) => [
-  cil(id + '.cabeza', pos, 3, 4.8, 'zinc', { eje: haciaAfuera, seg: 14 }),
+  cil(id + '.cabeza', pos, 2.4, 4, 'zinc', { eje: haciaAfuera, seg: 14 }),
   cil(id + '.cana', pos, 14, 2, 'zinc', { eje: haciaAfuera.map((n) => -n), seg: 8, sinContorno: true, sinAristas: true }),
 ];
 const tornillosH = (nivel, sz, lado, sx) => YA.map((y, k) => tornillo(`A.${nivel}.${lado}.${k}`, [sx * E, y, sz > 0 ? Z_TECHO : Z_PISO], [sx, 0, 0])).flat();
@@ -55,14 +61,14 @@ const cubo = () => [...paso4(), ...canosH('abajo', -1), ...LADOS.flatMap(([l, sx
 const manta = (w = 760, d = 640, extra = {}) => ({ id: 'manta', tipo: 'manta', w, d, r: 22, mat: 'carton', ...extra });
 
 function ordenPiezas() {
-  const grupo = (g, y0) => Array.from({ length: 10 }, (_, k) => cil(`pz.1.${g}.${k}`, [-L_CANO / 2 - 110, y0 + k * 15, R], L_CANO, R, 'chapa', { eje: [1, 0, 0] }));
+  const grupo = (g) => Array.from({ length: 10 }, (_, k) => cil(`pz.1.${g}.${k}`, [g % 2 ? -100 : -460, -250 + Math.floor(g / 2) * 270 + k * 24, R], L_CANO, R, 'chapa', { eje: [1, 0, 0] }));
   const esq = (k) => esquina('arriba', 1, 'izq', 1).map((p) => ({
     ...p, id: p.id.replace('e.arriba.izq', 'pz.2.' + k),
     pos: [p.pos[0] - E + 330 + k * 42, p.pos[1] - 110, p.pos[2] - ALTO + 17],
   }));
   return [
     manta(1060, 860, { pos: [60, 10, 0] }),
-    ...[0, 1, 2, 3].flatMap((g) => grupo(g, -300 + g * 160)),
+    ...[0, 1, 2, 3].flatMap((g) => grupo(g)),
     { id: 'rotulo.1', tipo: 'texto', txt: '1 · CAÑOS ×40', pos: [-110, 350, .3], alto: 46 },
     ...[0, 1, 2, 3].flatMap(esq),
     { id: 'rotulo.2', tipo: 'texto', txt: '2 · ESQUINAS ×4', pos: [390, 90, .3], alto: 40 },
@@ -81,7 +87,7 @@ const mover = (p, recorrido = 120, dir = [0, 0, 1], demora = 0) => ({ nombre: []
 const paso = (num, id, titulo, a, piezas, extra = {}) => ({
   num, id, grupo: 'Armado', titulo: `${num}. ${titulo}`, titular: titulo,
   subs: { a, b: [], tip: '' }, usa: [], cuenta: { fijo: `Paso ${num} de 6` },
-  vista: { yaw: -32, pitch: 22 }, piezas, mueven: [], resaltar: [], encuadrarTodo: false, ...extra,
+  vista: { yaw: -42, pitch: 24 }, piezas, mueven: [], resaltar: [], encuadrarTodo: false, ...extra,
 });
 const TIP_TOPE = 'No empujes el tornillo hacia adentro del caño: apoyá el caño en la esquina y recién ahí enroscá. Si el tope se hunde, el caño no se puede usar.';
 
@@ -90,10 +96,10 @@ export default {
   marca: {
     nombre: 'DEGË Muebles', logo: 'assets/logo-dege.png', whatsapp: '5493413349022',
     tienda: 'https://dege.com.ar/productos/ch32cubo/', instagram: 'https://instagram.com/dege.muebles',
-    confeti: ['#77773F', '#ffffff', '#e9e4d6', '#1d1d1b'],
+    confeti: ['#3a3a3a', '#ffffff', '#e9e4d6', '#c9ced3'],
   },
   materiales: {
-    chapa: { color: '#77773F' }, zinc: { color: '#c9ced3' }, carton: { color: '#e8d3b2' }, bolsa: { color: '#eef5f6', opacidad: .92 },
+    chapa: { color: '#3a3a3a' }, zinc: { color: '#aeb3b8' }, carton: { color: '#e8d3b2' }, bolsa: { color: '#eef5f6', opacidad: .92 },
   },
   inventario: [{ id: 'A', n: 80, label: 'A · Tornillos' }],
   textos: {
@@ -123,17 +129,17 @@ export default {
   cotas: { w: 34, d: 31, h: 34, unidad: 'cm', caja: [-E, E, -PROF / 2, PROF / 2, 0, ALTO], lineas: [
     [[E, PROF / 2, 0], [-E, PROF / 2, 0], [0, 90, 0], 34],
     [[E, PROF / 2, 0], [E, -PROF / 2, 0], [90, 0, 0], 31],
-    [[-E, -PROF / 2, 0], [-E, -PROF / 2, ALTO], [-70, 0, 0], 34],
+    [[-E, PROF / 2, 0], [-E, PROF / 2, ALTO], [-70, 0, 0], 34],
   ] },
   escenas: [
-    { id: 'portada', grupo: 'Portada', vista: { yaw: -30, pitch: 20 }, piezas: cubo(), mueven: [] },
+    { id: 'portada', grupo: 'Portada', vista: { yaw: 28, pitch: 33 }, piezas: cubo(), mueven: [] },
     {
       id: 'orden', grupo: 'Antes de empezar', titulo: 'Ordená las piezas', titular: 'Revisá que estén todas',
       subs: { a: ['Sacá todo de la caja: 40 caños, 4 esquinas y la bolsa de tornillos.', 'Separá los caños en 4 grupos de 10: uno por cara.'], b: [], tip: '¿Falta algo o llegó una pieza golpeada? Sacale una foto y escribinos antes de seguir.' },
       usa: ['1 · Caños ×40', '2 · Esquinas ×4'],
       elegir: [
         { m: ['pz.1'], t: 'Son los 40 caños iguales: 10 por cara. Cada punta tiene un tope con un agujero para el tornillo.' },
-        { m: ['pz.2'], t: 'Son los 4 ángulos en L con dientes: van en las 4 aristas del cubo, con la L hacia afuera.' },
+        { m: ['pz.2'], t: 'Son los 4 ángulos en L con lengüetas redondas agujereadas: van en las 4 aristas del cubo, con la L hacia afuera.' },
       ],
       cuenta: { fijo: '44 piezas · 2 tipos' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 60 },
       piezas: ordenPiezas(), resaltar: ['pz.2.0'], mueven: [mover('pz.2.0', 120)],
@@ -147,11 +153,11 @@ export default {
     },
     paso(1, 'primera-cara', 'Primera cara y esquina', [
       'Tomá 10 caños y una esquina.',
-      'Apoyá cada caño en su diente de la esquina, con la L hacia afuera.',
+      'Apoyá cada caño contra su lengüeta de la esquina, con la L hacia afuera.',
     ], [manta(900, 700, { pos: [0, 0, 0] }), ...paso1().map((p) => ({ ...p, pos: [p.pos[0], p.pos[1], p.pos[2] - (Z_TECHO - R)] }))], {
       usa: ['1 · Caños ×10', '2 · Esquina', 'A · Tornillos ×10'], hw: { A: 10 }, titular: 'La L, hacia afuera',
       resaltar: ['e.arriba.izq', 'A.arriba.izq'], unir: ['c.arriba'], enfoque: .1,
-      subs: { a: ['Tomá 10 caños y una esquina.', 'Apoyá cada caño en su diente de la esquina, con la L hacia afuera.'], b: ['Recién ahí, enroscá un tornillo A en cada caño.', 'Girá sin empujar hacia adentro.'], tip: TIP_TOPE },
+      subs: { a: ['Tomá 10 caños y una esquina.', 'Apoyá cada caño contra su lengüeta de la esquina, con la L hacia afuera.'], b: ['Recién ahí, enroscá un tornillo A en cada caño.', 'Girá sin empujar hacia adentro.'], tip: TIP_TOPE },
       mueven: [mover('e.arriba.izq', 140, [1, 0, 0], 0), mover('A.arriba.izq', 70, [1, 0, 0], 0)],
       fases: {
         pieza: ['e.arriba.izq'], hw: ['A.arriba.izq'], retener: ['A.arriba.izq'], ocultarEnA: ['A.arriba.izq'],
@@ -162,7 +168,7 @@ export default {
     }),
     paso(2, 'costado', 'Primer costado', [
       'Colocá 10 caños en la misma esquina, apuntando hacia abajo.',
-      'Van en los dientes que quedan libres, entre los caños de la otra cara.',
+      'Van en las lengüetas que quedan libres, entre los caños de la otra cara.',
       'Atornillá cada uno con un tornillo A.',
     ], [manta(900, 700), ...paso2()], {
       usa: ['1 · Caños ×10', 'A · Tornillos ×10'], hw: { A: 10 }, titular: 'Hacia abajo, intercalados',
@@ -177,7 +183,7 @@ export default {
       usa: ['2 · Esquina', '1 · Caños ×10', 'A · Tornillos ×20'], hw: { A: 20 }, titular: 'Tres caras listas',
       resaltar: ['e.arriba.der', 'A.arriba.der', 'c.der', 'A.der.arriba'], unir: ['c.arriba'],
       mueven: [mover(['e.arriba.der', 'A.arriba.der'], 140, [-1, 0, 0], 0), mover(['c.der', 'A.der.arriba'], 160, [0, 0, -1], .8)],
-      vista: { yaw: -24, pitch: 22 },
+      vista: { yaw: -40, pitch: 24 },
     }),
     paso(4, 'esquinas-abajo', 'Esquinas de abajo', [
       'Colocá las dos esquinas que quedan en las puntas de abajo de los costados.',
@@ -186,7 +192,7 @@ export default {
       usa: ['2 · Esquinas ×2', 'A · Tornillos ×20'], hw: { A: 20 }, titular: 'Desde abajo, uno por caño',
       resaltar: ['e.abajo', 'A.izq.abajo', 'A.der.abajo'], unir: ['c.izq', 'c.der'],
       mueven: [mover('e.abajo', 120, [0, 0, -1], 0), mover(['A.izq.abajo', 'A.der.abajo'], 60, [0, 0, -1], .6)],
-      vista: { yaw: -30, pitch: -6 },
+      vista: { yaw: -40, pitch: -8 },
     }),
     paso(5, 'piso', 'Cerrá el piso', [
       'Colocá los últimos 10 caños entre las dos esquinas de abajo.',
@@ -195,16 +201,16 @@ export default {
       usa: ['1 · Caños ×10', 'A · Tornillos ×20'], hw: { A: 20 }, titular: 'La cuarta cara',
       resaltar: ['c.abajo', 'A.abajo'], unir: ['e.abajo'],
       mueven: [mover('c.abajo', 180, [0, 1, 0], 0), mover('A.abajo.izq', 60, [1, 0, 0], .8), mover('A.abajo.der', 60, [-1, 0, 0], .8)],
-      vista: { yaw: -32, pitch: 22 },
+      vista: { yaw: 30, pitch: 30 },
     }),
     paso(6, 'ajustar', 'Ajustá todo', [
       'Con el cubo apoyado en el piso, repasá los 80 tornillos con el destornillador.',
       'Ajustalos bien, sin pasarte de rosca.',
     ], [manta(900, 700), ...cubo()], {
       usa: ['Destornillador Phillips'], titular: 'Ajustá bien todos', sinFantasma: true, resaltar: ['A'],
-      mueven: [mover('A', 4, [0, 0, 1], 0)], vista: { yaw: -30, pitch: 22 },
+      mueven: [mover('A', 4, [0, 0, 1], 0)], vista: { yaw: 30, pitch: 30 },
       subs: { a: ['Con el cubo apoyado en el piso, repasá los 80 tornillos con el destornillador.', 'Ajustalos bien, sin pasarte de rosca.'], b: [], tip: 'Si vas a apilar cubos, ajustá cada uno antes de ponerle otro encima.' },
     }),
-    { id: 'fin', grupo: 'Listo', vista: { yaw: -30, pitch: 18 }, piezas: cubo(), mueven: [] },
+    { id: 'fin', grupo: 'Listo', vista: { yaw: 28, pitch: 30 }, piezas: cubo(), mueven: [] },
   ],
 };
