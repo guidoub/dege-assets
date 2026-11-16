@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, estadio, circulo, cil, perfil, agujero, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=3c7a40cf6b';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, estadio, circulo, cil, perfil, agujero, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=40bdf307a1';
 
 const CH = 2, L_PIE = 90, L_CANO = 265;
 const Z1 = REG + L_PIE, Z2 = Z1 + CH + L_CANO, Z3 = Z2 + CH + L_CANO;   // chapa de abajo, del medio y redonda

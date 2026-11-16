@@ -1,4 +1,4 @@
-import { cumo } from './_cumo.js?v=3c7a40cf6b';
+import { cumo } from './_cumo.js?v=40bdf307a1';
 export default cumo({
   id: 'sc01', codigo: 'SC01', nombre: 'Cubo multiuso', cabecera: 'Cubo multiuso', sust: 'cubo', art: 'el',
   tienda: 'https://dege.com.ar/productos/cubo-multiuso/', celdas: [[0, 0]], medidas: { w: 38.7, h: 38.7 },

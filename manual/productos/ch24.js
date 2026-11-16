@@ -1,5 +1,5 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, circulo, cil, perfil } from './_estimado.js?v=3c7a40cf6b';
-import { mesa3 } from './_tres_patas.js?v=3c7a40cf6b';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, circulo, cil, perfil } from './_estimado.js?v=40bdf307a1';
+import { mesa3 } from './_tres_patas.js?v=40bdf307a1';
 
 const GOTA = gota(880, 570), CIRC = circulo(245);
 const ANG = (a) => [205 * Math.cos(a * Math.PI / 180), 205 * Math.sin(a * Math.PI / 180)];
