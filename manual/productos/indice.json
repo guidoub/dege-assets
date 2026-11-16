@@ -78,5 +78,30 @@
   "id": "m10",
   "nombre": "Rack de TV",
   "codigo": "M10"
+ },
+ {
+  "id": "sc01",
+  "nombre": "Cubo multiuso",
+  "codigo": "SC01"
+ },
+ {
+  "id": "sc02",
+  "nombre": "Estantería doble",
+  "codigo": "SC02"
+ },
+ {
+  "id": "sc03-l",
+  "nombre": "Estantería en L",
+  "codigo": "SC03"
+ },
+ {
+  "id": "sc03-rack",
+  "nombre": "Rack de TV",
+  "codigo": "SC03"
+ },
+ {
+  "id": "sc03-vertical",
+  "nombre": "Estantería vertical",
+  "codigo": "SC03"
  }
 ]
