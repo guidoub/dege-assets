@@ -1,4 +1,4 @@
-import { cumo } from './_cumo.js?v=40bdf307a1';
+import { cumo } from './_cumo.js?v=b05813be06';
 export default cumo({
   id: 'sc02', codigo: 'SC02', nombre: 'Estantería doble', cabecera: 'Estantería doble', sust: 'estantería', art: 'la',
   tienda: 'https://dege.com.ar/productos/estanteria-doble/', celdas: [[0, 0], [0, 1]], medidas: { w: 38.7, h: 74.8 }, llenar: .7,

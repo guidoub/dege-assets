@@ -100,10 +100,10 @@ export default {
   marca: {
     nombre: 'DEGË Muebles', logo: 'assets/logo-dege.png', whatsapp: '5493413349022',
     tienda: 'https://dege.com.ar/productos/ch32cubo/', instagram: 'https://instagram.com/dege.muebles',
-    confeti: ['#9aa0a6', '#ffffff', '#e9e4d6', '#1d1d1b'],
+    confeti: ['#3a3a3a', '#ffffff', '#e9e4d6', '#c9ced3'],
   },
   materiales: {
-    chapa: { color: '#b4b8bc' }, zinc: { color: '#7d8287' }, carton: { color: '#e8d3b2' }, bolsa: { color: '#eef5f6', opacidad: .92 },
+    chapa: { color: '#454545' }, zinc: { color: '#aeb3b8' }, carton: { color: '#e8d3b2' }, bolsa: { color: '#eef5f6', opacidad: .92 },
   },
   inventario: [{ id: 'A', n: 80, label: 'A · Tornillos' }],
   textos: {

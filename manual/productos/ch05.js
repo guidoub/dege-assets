@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=40bdf307a1';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=b05813be06';
 
 const W = 800, H = 800, D = 165, T = 2, XR = 180, RW = 40;   // rieles a ±18 cm del centro, de 4 cm de ancho
 const ZS = [110, 400, 690];                                    // altura de los 3 estantes (se pueden cambiar de ranura)

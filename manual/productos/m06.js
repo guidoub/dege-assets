@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=40bdf307a1';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=b05813be06';
 
 const W = 680, D = 300, E = 15, H = 1670;
 const P = { fi: [315, 125], fd: [-315, 125], ti: [315, -125], td: [-315, -125] }, K = Object.keys(P), ATRAS = ['ti', 'td'], ADEL = ['fi', 'fd'];
