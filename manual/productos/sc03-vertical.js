@@ -1,5 +1,5 @@
 // SC03 · Estantería vertical (3 cubos apilados). Ver productos/_cumo.js y estudio/cumo-notas.md
-import { cumo } from './_cumo.js?v=cd71252622';
+import { cumo } from './_cumo.js?v=1c78ec3285';
 export default cumo({
   id: 'sc03-vertical', codigo: 'SC03', nombre: 'Estantería vertical', cabecera: 'Estantería vertical', sust: 'estantería', art: 'la',
   tienda: 'https://dege.com.ar/productos/estanteria-vertical/', celdas: [[0, 0], [0, 1], [0, 2]], medidas: { w: 38.7, h: 111 },

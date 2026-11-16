@@ -1,5 +1,5 @@
 // SC03 · Rack de TV / Estantería horizontal (3 cubos en fila). Ver productos/_cumo.js y estudio/cumo-notas.md
-import { cumo } from './_cumo.js?v=cd71252622';
+import { cumo } from './_cumo.js?v=1c78ec3285';
 export default cumo({
   id: 'sc03-rack', codigo: 'SC03', nombre: 'Rack de TV', cabecera: 'Rack de TV', sust: 'rack', art: 'el',
   tienda: 'https://dege.com.ar/productos/rack-de-tv-estanteria-horizontal/', celdas: [[0, 0], [-1, 0], [-2, 0]], medidas: { w: 111, h: 38.7 },

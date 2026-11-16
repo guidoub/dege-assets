@@ -1,5 +1,5 @@
 // SC02 · Estantería doble (2 cubos apilados, comparten la placa del medio). Ver productos/_cumo.js y estudio/cumo-notas.md
-import { cumo } from './_cumo.js?v=cd71252622';
+import { cumo } from './_cumo.js?v=1c78ec3285';
 export default cumo({
   id: 'sc02', codigo: 'SC02', nombre: 'Estantería doble', cabecera: 'Estantería doble', sust: 'estantería', art: 'la',
   tienda: 'https://dege.com.ar/productos/estanteria-doble/', celdas: [[0, 0], [0, 1]], medidas: { w: 38.7, h: 74.8 }, llenar: .7,
