@@ -1,5 +1,10 @@
 [
  {
+  "id": "c06",
+  "nombre": "Mesa ratona industrial (a confirmar)",
+  "codigo": "C06"
+ },
+ {
   "id": "ch01",
   "nombre": "Mesita Matera",
   "codigo": "CH01"
@@ -13,6 +18,11 @@
   "id": "ch04",
   "nombre": "Mesa auxiliar 3 pisos",
   "codigo": "CH04"
+ },
+ {
+  "id": "ch05",
+  "nombre": "Estantería flotante (a confirmar)",
+  "codigo": "CH05"
  },
  {
   "id": "ch07",
@@ -45,6 +55,16 @@
   "codigo": "CH21"
  },
  {
+  "id": "ch22",
+  "nombre": "Mesa ratona gota (a confirmar)",
+  "codigo": "CH22"
+ },
+ {
+  "id": "ch24",
+  "nombre": "Set de mesas ratonas (a confirmar)",
+  "codigo": "CH24"
+ },
+ {
   "id": "ch29",
   "nombre": "Mesa de arrime",
   "codigo": "CH29"
@@ -60,6 +80,11 @@
   "codigo": "CH32"
  },
  {
+  "id": "ch33",
+  "nombre": "Mesa lateral 3 niveles (a confirmar)",
+  "codigo": "CH33"
+ },
+ {
   "id": "ch36",
   "nombre": "Zapatero de entrada",
   "codigo": "CH36"
@@ -73,6 +98,21 @@
   "id": "ch38",
   "nombre": "Mesa de arrime regulable",
   "codigo": "CH38"
+ },
+ {
+  "id": "m02",
+  "nombre": "Mesa de arrime (a confirmar)",
+  "codigo": "M02"
+ },
+ {
+  "id": "m05",
+  "nombre": "Perchero industrial (a confirmar)",
+  "codigo": "M05"
+ },
+ {
+  "id": "m06",
+  "nombre": "Perchero industrial (a confirmar)",
+  "codigo": "M06"
  },
  {
   "id": "m10",

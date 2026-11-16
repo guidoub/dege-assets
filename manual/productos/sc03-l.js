@@ -1,5 +1,5 @@
 // SC03 · Estantería en L (3 cubos: dos abajo y uno arriba del de la izquierda, como la portada de la ficha; +X = izquierda en pantalla). Ver productos/_cumo.js y estudio/cumo-notas.md
-import { cumo } from './_cumo.js?v=1c78ec3285';
+import { cumo } from './_cumo.js?v=0c6ddde886';
 export default cumo({
   id: 'sc03-l', codigo: 'SC03', nombre: 'Estantería en L', cabecera: 'Estantería en L', sust: 'estantería', art: 'la',
   tienda: 'https://dege.com.ar/productos/estanteria-en-l/', celdas: [[0, 0], [1, 0], [1, 1]], medidas: { w: 74.8, h: 74.8 },
