@@ -10,6 +10,11 @@
   "codigo": "CH02"
  },
  {
+  "id": "ch04",
+  "nombre": "Mesa auxiliar 3 pisos",
+  "codigo": "CH04"
+ },
+ {
   "id": "ch07",
   "nombre": "Mesita de luz 3 pisos",
   "codigo": "CH07"
@@ -53,6 +58,11 @@
   "id": "ch32",
   "nombre": "Cubo modular",
   "codigo": "CH32"
+ },
+ {
+  "id": "ch36",
+  "nombre": "Zapatero de entrada",
+  "codigo": "CH36"
  },
  {
   "id": "ch37",

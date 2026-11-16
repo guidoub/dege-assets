@@ -1,12 +1,12 @@
 // Manual de armado DEGË · interfaz
 // Carga el producto (?p=mesa-ratona por defecto), arma las escenas con el motor 3D y maneja todo el recorrido:
 // portada → «Antes de arrancar» → pasos (con dos tiempos cuando hay herrajes) → cierre → reseña.
-import { Motor } from "./motor3d.js";
-import { IC, GRUPO_IC } from "./iconos.js";
+import { Motor } from "./motor3d.js?v=999ceef9b3";
+import { IC, GRUPO_IC } from "./iconos.js?v=999ceef9b3";
 
 const qs = new URLSearchParams(location.search);
 const ID = (qs.get("p") || "ch29").replace(/[^a-z0-9-]/g, "");
-const P = (await import(`../productos/${ID}.js`)).default;
+const P = (await import(`../productos/${ID}.js?v=999ceef9b3`)).default;
 const T = P.textos, S = P.escenas, N = S.length, LAST = N - 1, STEPS = N - 2;
 const KEY = "dege:manual:" + P.id;
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -258,7 +258,7 @@ function paint(dt) {
   }
   if (x1 > x0) {
     const bw = x1 - x0, bh = y1 - y0;
-    const fill = cur === 0 && P.cotas ? 0.72 : cur === 0 || cur === LAST ? 0.86 : 0.9;
+    const fill = cur === 0 && P.cotas ? (P.cotas.llenar ?? 0.72) : cur === 0 || cur === LAST ? 0.86 : 0.9; // muebles anchos: cotas.llenar más bajo deja lugar a los textos
     const k = Math.max(bw / (aw * fill), bh / (ah * fill)); // mm por píxel
     const goal = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 + ((top - bottom) / 2) * k, w: R.width * k, h: R.height * k };
     for (const g in goal) view[g] = view.ready && dt ? follow(view[g], goal[g], dt, fase === "B" ? 0.6 : 0.35) : goal[g];

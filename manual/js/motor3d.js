@@ -30,7 +30,11 @@ void main(){
   clip.xy += d * uPx * 2.0 / uRes * clip.w;
   // Un poco detrás de la superficie: en chapas finas, triángulos del casco que se dan vuelta al inflarse
   // quedaban a la misma profundidad que la cara y dibujaban rayas oscuras sobre ella.
-  clip.z += 0.001 * clip.w;   // ≈10 mm con la cámara ortográfica (near 1, far 20000)
+  // Mínimo 10 mm; si el mueble se ve chico (muchos mm por píxel) el retroceso crece con la escala:
+  // con 10 mm fijos, las chapas con agujeros mostraban puntitos en la portada y el cierre (CH04).
+  float mmPx = 2.0 / (projectionMatrix[0][0] * uRes.x);
+  float atras = max(10.0, 6.0 * uPx * mmPx);
+  clip.z += atras * (-projectionMatrix[2][2]) * clip.w;   // cámara ortográfica: −P22 = 2 / (far − near)
   gl_Position = clip;
 }`;
 const CONTORNO_FS = `uniform vec3 uColor; uniform float uOpacity; void main(){ gl_FragColor = vec4(uColor, uOpacity); }`;

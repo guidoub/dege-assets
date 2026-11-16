@@ -125,8 +125,9 @@ em{font-style:italic}
 /* hoja inferior */
 .sheet{position:relative;z-index:3;flex:0 0 auto;max-height:52%;overflow-y:auto;overscroll-behavior:contain;padding:4px 20px 0;background:var(--paper);scrollbar-width:none}
 .sheet::-webkit-scrollbar{display:none}
-.story.big .stage-wrap{flex:1 1 auto}
-.story.big .sheet{max-height:30%}
+/* «ver en grande» solo achica la hoja en los pasos: en la portada y el cierre el botón no está y no se podría volver */
+.story.big[data-kind="step"] .stage-wrap{flex:1 1 auto}
+.story.big[data-kind="step"] .sheet{max-height:30%}
 .card{min-height:0;position:relative}
 .card h2{font:700 24px/1.15 'DM Sans',Arial;margin:8px 0 6px;color:var(--ink);letter-spacing:-.01em;text-wrap:balance}
 .card h2 em{font-style:italic;font-weight:700}
