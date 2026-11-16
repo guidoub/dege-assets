@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=b05813be06';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=d78344297c';
 
 const W = 680, D = 300, E = 15, H = 1670;
 const P = { fi: [315, 125], fd: [-315, 125], ti: [315, -125], td: [-315, -125] }, K = Object.keys(P);
@@ -11,16 +11,18 @@ const esp1 = () => K.map((k) => esparrago('esp1.' + k, P[k], Z1));
 const canos = () => K.map((k) => cil('cano.' + k, [...P[k], Z1 + E], Z2 - Z1 - E, R_CANO));
 const espPoste = (id, z) => esparrago(id, P[POSTE], z);
 const [PX, PY] = P[POSTE];
-const ganchoSimple = () => [caja('gancho1.base', PX - 70, PX, PY - 9, PY + 9, ZJ, 2.5), caja('gancho1.punta', PX - 73, PX - 70, PY - 8, PY + 8, ZJ, 24)];
-const ganchoDoble = () => [caja('gancho2.base', PX - 70, PX + 70, PY - 9, PY + 9, ZTOP, 2.5),
-  caja('gancho2.punta.i', PX + 70, PX + 73, PY - 8, PY + 8, ZTOP, 24), caja('gancho2.punta.d', PX - 73, PX - 70, PY - 8, PY + 8, ZTOP, 24)];
+const GANCHOS = [[1580, [1, 0]], [1405, [0, -1]], [1246, [0, 1]], [1080, [-1, 0]]];
+const gancho = (k) => { const [z, [dx, dy]] = GANCHOS[k], id = 'gancho.' + (k + 1), x0 = PX + dx * R_CANO, y0 = PY + dy * R_CANO;
+  return [cil(id + '.brazo', [x0, y0, z], 62, 3.5, 'chapa', { eje: [dx, dy, 0], seg: 14 }),
+    cil(id + '.punta', [x0 + dx * 60, y0 + dy * 60, z - 2], 26, 3.5, 'chapa', { eje: [dx * .45, dy * .45, 1], seg: 14 })]; };
+const ganchos = () => [0, 1, 2, 3].flatMap(gancho);
 const s1 = () => [...reg(), ...pies(), ...esp1()];
 const s2 = () => [...s1(), tabla('est1', Z1)];
 const s3 = () => [...s2(), ...canos(), espPoste('esp2', Z2)];
 const s4 = () => [...s3(), tabla('est2', Z2), ...CORTAS.flatMap((k) => allen('A.' + k, P[k], Z2 + E))];
-const s5 = () => [...s4(), cil('poste1', [PX, PY, Z2 + E], ZJ - Z2 - E, R_CANO), espPoste('esp3', ZJ), ...ganchoSimple(), cil('poste2', [PX, PY, ZJ + 2.5], ZTOP - ZJ - 2.5, R_CANO)];
-const perchero = () => [...s5(), ...ganchoDoble(), ...allen('A.tope', P[POSTE], ZTOP + 2.5)];
-const IDS_A = idsAllen(CORTAS.map((k) => 'A.' + k)), IDS_TOPE = idsAllen(['A.tope']);
+const s5 = () => [...s4(), cil('poste1', [PX, PY, Z2 + E], ZJ - Z2 - E, R_CANO), espPoste('esp3', ZJ), cil('poste2', [PX, PY, ZJ], H - ZJ, R_CANO)];
+const perchero = () => [...s5(), ...ganchos()];
+const IDS_A = idsAllen(CORTAS.map((k) => 'A.' + k));
 
 const NA = 7, paso = P_(NA, { yaw: -26, pitch: 16 });
 const acostado = (id, x, y, largo) => cil(id, [x, y, R_CANO], largo, R_CANO, 'chapa', { eje: [1, 0, 0] });
@@ -32,7 +34,7 @@ const ordenPiezas = () => [
   { id: 'rotulo.2', tipo: 'texto', txt: '2 · PATAS ×4', pos: [230, 440, .3], alto: 20 },
   ...[0, 1, 2, 3].map((i) => acostado('pz.3.' + i, 160, 180 - i * 40, Z2 - Z1 - E)),
   { id: 'rotulo.3', tipo: 'texto', txt: '3 · CAÑOS ×4', pos: [330, 230, .3], alto: 20 },
-  acostado('pz.4.0', -620, -130, ZJ - Z2 - E), acostado('pz.4.1', -620, -180, ZTOP - ZJ - 2.5),
+  acostado('pz.4.0', -620, -130, ZJ - Z2 - E), acostado('pz.4.1', -620, -180, H - ZJ),
   { id: 'rotulo.4', tipo: 'texto', txt: '4 · CAÑOS DEL POSTE ×2', pos: [-330, -260, .3], alto: 20 },
 ];
 
@@ -40,11 +42,11 @@ export default {
   id: 'm05', version: 1, pasosManual: NA, estimado: true,
   marca: marca('https://dege.com.ar/productos/perchero-industrial-m05/', ['#C8995B', '#1d1d1b', '#ffffff', '#e9e4d6']),
   materiales: MATS('#232323', { madera: { color: '#C99A5E' } }),
-  inventario: [{ id: 'C', n: 4, label: 'C · Regatones' }, { id: 'B', n: 6, label: 'B · Espárragos' }, { id: 'A', n: 4, label: 'A · Tornillos Allen' }, { id: 'D', n: 2, label: 'D · Ganchos' }],
+  inventario: [{ id: 'C', n: 4, label: 'C · Regatones' }, { id: 'B', n: 6, label: 'B · Espárragos' }, { id: 'A', n: 3, label: 'A · Tornillos Allen' }, { id: 'D', n: 4, label: 'D · Ganchos' }],
   textos: textos({
     nombre: 'Perchero industrial con banco', codigo: 'M05', cabecera: 'Perchero con banco M05', sust: 'perchero', art: 'el',
     ladoCuerpo: 'Un banco de dos niveles y un poste con ganchos atrás. Seguí los pasos y girá el modelo para ver cada unión.',
-    datos: [['layers', '12 piezas', '+ 16 herrajes'], ['steps', `${NA} pasos`, 'llave incluida'], ['box', '68 × 30 × 167', 'cm · ancho, fondo y alto']],
+    datos: [['layers', '12 piezas', '+ 17 herrajes'], ['steps', `${NA} pasos`, 'llave incluida'], ['box', '68 × 30 × 167', 'cm · ancho, fondo y alto']],
     momTitulo: 'Tu perchero,<br><em>de abajo hacia arriba</em>', momCuerpo: 'Primero el banco y después el poste con los ganchos. La llave viene en la caja.',
     finCuerpo: 'Sentate a ponerte las zapatillas, colgá el abrigo en el poste y dejá el calzado abajo.',
     finTip: 'Apoyalo contra la pared. Cada tanto, repasá los tornillos. ¡Mandanos una foto cuando lo tengas armado!',
@@ -65,10 +67,10 @@ export default {
     },
     {
       id: 'herrajes', grupo: 'Antes de empezar', titulo: 'Contá los herrajes', titular: 'Contá antes de armar',
-      subs: { a: ['Son 6 espárragos, 4 tornillos Allen, 2 ganchos, 4 regatones y la llave.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: 'Un gancho es simple y el otro doble: el doble va arriba de todo.' },
-      usa: ['Llave incluida'], check: [[6, 'B · Espárragos'], [4, 'A · Tornillos Allen'], [2, 'D · Ganchos'], [4, 'C · Regatones'], [1, 'Llave']],
-      cuenta: { fijo: '16 herrajes · 1 llave' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 56 },
-      piezas: herrajes([{ letra: 'B', n: 6, tipo: 'esparrago' }, { letra: 'A', n: 4, tipo: 'allen' }, { letra: 'C', n: 4, tipo: 'regaton' }]), resaltar: ['llave'], mueven: [mover('llave', 90)],
+      subs: { a: ['Son 6 espárragos, 3 tornillos Allen, 4 ganchos, 4 regatones y la llave.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: 'Los 4 ganchos son iguales: van en el poste, al final.' },
+      usa: ['Llave incluida'], check: [[6, 'B · Espárragos'], [3, 'A · Tornillos Allen'], [4, 'D · Ganchos'], [4, 'C · Regatones'], [1, 'Llave']],
+      cuenta: { fijo: '17 herrajes · 1 llave' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 56 },
+      piezas: herrajes([{ letra: 'B', n: 6, tipo: 'esparrago' }, { letra: 'A', n: 3, tipo: 'allen' }, { letra: 'C', n: 4, tipo: 'regaton' }]), resaltar: ['llave'], mueven: [mover('llave', 90)],
     },
     paso(1, 'patas', 'Las patas', ['Enroscá un regatón C en una punta de cada pata y un espárrago B en la otra.'], [manta(), ...s1()], {
       usa: ['2 · Patas ×4', 'C · Regatones ×4', 'B · Espárragos ×4'], hw: { C: 4, B: 4 }, titular: 'Regatón abajo, espárrago arriba', resaltar: ['reg', 'esp1'], unir: ['pie'],
@@ -88,23 +90,22 @@ export default {
       fases: { pieza: ['est2'], hw: IDS_A, retener: ['A'], ocultarEnA: IDS_A, ref: 'A.fi', vistaB: { yaw: -24, pitch: 52 }, titularB: 'Un tornillo en cada caño', herramienta: { tipo: 'allen', pos: [...P.fi, Z2 + E + 3] } },
       vista: { yaw: -24, pitch: 24 },
     }),
-    paso(5, 'poste', 'El poste y el primer gancho', [
+    paso(5, 'poste', 'El poste', [
       'Enroscá el primer caño del poste en el espárrago.',
-      'Arriba, un espárrago y el gancho simple; después, el otro caño del poste.',
+      'Arriba, otro espárrago y el segundo caño del poste.',
     ], [manta(), ...s5()], {
-      usa: ['4 · Caños del poste ×2', 'B · Espárrago', 'D · Gancho simple'], hw: { B: 1, D: 1 }, titular: 'El gancho, apretado entre los dos caños', resaltar: ['poste1', 'esp3', 'gancho1', 'poste2'], unir: ['est2'],
-      subs: { a: ['Enroscá el primer caño del poste en el espárrago.', 'Arriba, un espárrago y el gancho simple; después, el otro caño del poste.'], b: [], tip: 'A confirmar con fábrica: cómo se fijan los ganchos del poste.' },
-      mueven: [mover('poste1', 200, [0, 0, 1], 0), mover('esp3', 70, [0, 0, 1], .5), mover('gancho1', 80, [0, 0, 1], .8), mover('poste2', 220, [0, 0, 1], 1.1)],
-      vista: { yaw: -28, pitch: 12 },
-    }),
-    paso(6, 'remate', 'El gancho doble', ['Apoyá el gancho doble arriba del poste.'], [manta(), ...perchero()], {
-      usa: ['D · Gancho doble', 'A · Tornillo Allen', 'Llave'], hw: { D: 1, A: 1 }, titular: 'Una punta a cada lado', resaltar: ['gancho2', 'A.tope'], unir: ['poste2'],
-      subs: { a: ['Apoyá el gancho doble arriba del poste.'], b: ['Fijalo con el último tornillo Allen A.'], tip: 'Si te cuesta llegar, hacelo con un banquito firme.' },
-      mueven: [mover('gancho2', 120, [0, 0, 1], 0), mover('A.tope', 60, [0, 0, 1], .6)],
-      fases: { pieza: ['gancho2'], hw: IDS_TOPE, retener: ['A.tope'], ocultarEnA: IDS_TOPE, ref: 'A.tope', vistaB: { yaw: -24, pitch: 40 }, titularB: 'Un tornillo arriba de todo', herramienta: { tipo: 'allen', pos: [PX, PY, ZTOP + 2.5 + 3] } },
+      usa: ['4 · Caños del poste ×2', 'B · Espárrago'], hw: { B: 1 }, titular: 'Dos caños, uno arriba del otro', resaltar: ['poste1', 'esp3', 'poste2'], unir: ['est2'],
+      subs: { a: ['Enroscá el primer caño del poste en el espárrago.', 'Arriba, otro espárrago y el segundo caño del poste.'], b: [], tip: 'Ajustá a mano hasta que los caños queden bien juntos.' },
+      mueven: [mover('poste1', 200, [0, 0, 1], 0), mover('esp3', 70, [0, 0, 1], .5), mover('poste2', 220, [0, 0, 1], .9)],
       vista: { yaw: -26, pitch: 12 },
     }),
-    paso(7, 'revisar', 'Revisá que esté firme', ['Repasá los 4 tornillos con la llave.', 'Si algo se mueve, ajustalo un poco más.'], [manta(), ...perchero()], {
+    paso(6, 'ganchos', 'Los ganchos', ['Enroscá un gancho D en cada agujero del poste.'], [manta(), ...perchero()], {
+      usa: ['D · Ganchos ×4'], hw: { D: 4 }, titular: 'Cada uno hacia un lado', resaltar: ['gancho'], unir: ['poste2'],
+      subs: { a: ['Enroscá un gancho D en cada agujero del poste.', 'Girálos hasta que la punta quede hacia arriba.'], b: [], tip: 'A confirmar con fábrica: cómo se fijan los ganchos al poste.' },
+      mueven: [0, 1, 2, 3].map((k) => mover('gancho.' + (k + 1), 70, [...GANCHOS[k][1], 0], k * .3)),
+      vista: { yaw: -26, pitch: 12 },
+    }),
+    paso(7, 'revisar', 'Revisá que esté firme', ['Repasá los 3 tornillos con la llave.', 'Si algo se mueve, ajustalo un poco más.'], [manta(), ...perchero()], {
       usa: ['Llave'], titular: 'Que no se mueva nada', sinFantasma: true, resaltar: ['A'], vista: { yaw: -34, pitch: 12 },
     }),
     { id: 'fin', grupo: 'Listo', vista: { yaw: -24, pitch: 12 }, piezas: perchero(), mueven: [] },

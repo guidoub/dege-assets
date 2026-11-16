@@ -4,7 +4,7 @@ const L_CANO = 270, L_TOPE = 90;
 const zCano = (k) => BASE + k * (L_CANO + ESTANTE);       // inicio del caño k (0..4)
 const zEstante = (k) => zCano(k) + L_CANO;               // estante k, encima del caño k
 const Z_TOPE = zCano(5), ALTO = Z_TOPE + L_TOPE;          // ≈ 1456
-const GIROS = [0, -90, 180, 90, 0];
+const GIROS = [0, 0, 0, 0, 0];
 
 const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 32, ...extra });
 

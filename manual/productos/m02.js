@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=b05813be06';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=d78344297c';
 
 const W = 450, D = 300, E = 15, H = 660, ZT = H - E, R = 11;
 const XS = [205, -205], YS = [-115, -55];                  // dos caños por lado, del lado de atrás

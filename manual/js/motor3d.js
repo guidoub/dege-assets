@@ -169,7 +169,9 @@ function geometria(p) {
       // Calados reales, en el plano local del perfil (manijas, canaletas y agujeros).
       for (const h of p.huecos || []) {
         const contorno = formaRedondeada(h.w, h.d, h.r ?? 0);
-        const puntos = contorno.getPoints(28).map(v => v.add(new THREE.Vector2(h.x || 0, h.y || 0)));
+        // giro (grados): ranuras inclinadas, p. ej. las de los rieles de la CH05
+        const g = (h.giro || 0) * Math.PI / 180, cero = new THREE.Vector2(0, 0);
+        const puntos = contorno.getPoints(28).map(v => (g ? v.rotateAround(cero, g) : v).add(new THREE.Vector2(h.x || 0, h.y || 0)));
         shape.holes.push(new THREE.Path(puntos));
       }
       const g = new THREE.ExtrudeGeometry(shape, { depth: p.z1 - p.z0, bevelEnabled: false, curveSegments: 28 });

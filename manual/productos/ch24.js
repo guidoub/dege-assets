@@ -1,9 +1,9 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, circulo, cil, perfil } from './_estimado.js?v=b05813be06';
-import { mesa3 } from './_tres_patas.js?v=b05813be06';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, circulo, cil, perfil } from './_estimado.js?v=d78344297c';
+import { mesa3 } from './_tres_patas.js?v=d78344297c';
 
-const GOTA = gota(880, 570), CIRC = circulo(245);
+const GOTA = gota(880, 570).map(([x, y]) => [-x, y]), CIRC = circulo(245);
 const ANG = (a) => [205 * Math.cos(a * Math.PI / 180), 205 * Math.sin(a * Math.PI / 180)];
-const G = mesa3({ pre: 'g', contorno: GOTA, patas: { 1: [300, 165], 2: [-350, 0], 3: [170, -195] }, alto: 340, off: [150, 70] });
+const G = mesa3({ pre: 'g', contorno: GOTA, patas: { 1: [-300, 165], 2: [350, 0], 3: [-170, -195] }, alto: 340, off: [190, 70] });
 const C = mesa3({ pre: 'c', contorno: CIRC, patas: { 1: ANG(210), 2: ANG(90), 3: ANG(330) }, alto: 440, off: [-360, -150] });
 const NA = 8, paso = P_(NA, { yaw: -24, pitch: 22 });
 const set = () => [...G.completa(), ...C.completa()];
@@ -45,8 +45,8 @@ export default {
     momTitulo: 'Tus dos mesas,<br><em>una por una</em>', momCuerpo: 'Primero la gota y después la redonda: se arman igual. Separá los caños bajos de los altos y tené a mano un destornillador Phillips.',
     finCuerpo: 'La redonda, más alta, se mete por arriba de la gota: juntas o separadas, como te quede mejor.',
   }),
-  cotas: { w: 88, d: 57, h: 44, unidad: 'cm', llenar: .62, caja: [-605, 590, -395, 355, 0, 443], lineas: [
-    [[590, 355, 0], [-150 - 440 + 300, 355, 0], [0, 70, 0], 88],
+  cotas: { w: 88, d: 57, h: 44, unidad: 'cm', llenar: .62, caja: [-605, 630, -395, 355, 0, 443], lineas: [
+    [[190 + 440, 355, 0], [190 - 440, 355, 0], [0, 70, 0], 88],   // largo de la gota (centrada en x = 190)
     [[-605, -150, 0], [-605, -150, 440], [-70, 0, 0], 44],
   ] },
   escenas: [

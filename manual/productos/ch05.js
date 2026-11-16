@@ -1,4 +1,4 @@
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=b05813be06';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=d78344297c';
 
 const W = 800, H = 800, D = 165, T = 2, XR = 180, RW = 40;   // rieles a ±18 cm del centro, de 4 cm de ancho
 const ZS = [110, 400, 690];                                    // altura de los 3 estantes (se pueden cambiar de ranura)
@@ -7,7 +7,7 @@ const XZ = [90, 0, 0];
 
 const arcos = (pts, cu, cv, r, a0, a1, n = 6) => { for (let k = 0; k <= n; k++) { const a = (a0 + (a1 - a0) * k / n) * Math.PI / 180; pts.push([cu + r * Math.cos(a), cv + r * Math.sin(a)]); } };
 const rr = (u0, u1, v0, v1, r) => { const p = []; arcos(p, u1 - r, v0 + r, r, -90, 0); arcos(p, u1 - r, v1 - r, r, 0, 90); arcos(p, u0 + r, v1 - r, r, 90, 180); arcos(p, u0 + r, v0 + r, r, 180, 270); return p; };
-const ranuras = (x) => Array.from({ length: 13 }, (_, i) => ({ x, y: 115 + i * 48, w: 22, d: 4, r: 2 })).filter((h) => Math.abs(h.y - 760) > 25 && Math.abs(h.y - 60) > 25);
+const ranuras = (x) => Array.from({ length: 13 }, (_, i) => ({ x, y: 115 + i * 48, w: 30, d: 4, r: 2, giro: -28 })).filter((h) => Math.abs(h.y - 760) > 25 && Math.abs(h.y - 60) > 25);
 const riel = (s) => ({ id: 'riel.' + (s > 0 ? 'i' : 'd'), tipo: 'perfil', puntos: rr(s * XR - RW / 2, s * XR + RW / 2, 0, H, 4), pos: [0, T, 0], z0: 0, z1: T, mat: 'chapa', rotacion: XZ,
   huecos: [...ranuras(s * XR), ...FIJ.filter(([x]) => Math.sign(x) === s).map(([x, z]) => ({ x, y: z, w: 6, d: 6, r: 3 }))] });
 const rieles = () => [riel(1), riel(-1)];
