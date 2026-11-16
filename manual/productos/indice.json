@@ -1,0 +1,72 @@
+[
+ {
+  "id": "ch01",
+  "nombre": "Mesita Matera",
+  "codigo": "CH01"
+ },
+ {
+  "id": "ch02",
+  "nombre": "Mesita auxiliar 2 pisos",
+  "codigo": "CH02"
+ },
+ {
+  "id": "ch07",
+  "nombre": "Mesita de luz 3 pisos",
+  "codigo": "CH07"
+ },
+ {
+  "id": "ch08",
+  "nombre": "Mesa Ratona",
+  "codigo": "CH08"
+ },
+ {
+  "id": "ch09",
+  "nombre": "Estantería baja",
+  "codigo": "CH09"
+ },
+ {
+  "id": "ch10",
+  "nombre": "Biblioteca",
+  "codigo": "CH10"
+ },
+ {
+  "id": "ch11",
+  "nombre": "Recibidor",
+  "codigo": "CH11"
+ },
+ {
+  "id": "ch21",
+  "nombre": "Estantería Totem",
+  "codigo": "CH21"
+ },
+ {
+  "id": "ch29",
+  "nombre": "Mesa de arrime",
+  "codigo": "CH29"
+ },
+ {
+  "id": "ch31",
+  "nombre": "Rack de TV móvil",
+  "codigo": "CH31"
+ },
+ {
+  "id": "ch32",
+  "nombre": "Cubo modular",
+  "codigo": "CH32"
+ },
+ {
+  "id": "ch37",
+  "nombre": "Mesa de arrime XL",
+  "codigo": "CH37"
+ },
+ {
+  "id": "ch38",
+  "nombre": "Mesa de arrime regulable",
+  "codigo": "CH38"
+ },
+ {
+  "id": "m10",
+  "nombre": "Rack de TV",
+  "codigo": "M10"
+ }
+]

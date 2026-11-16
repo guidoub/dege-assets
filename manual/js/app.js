@@ -5,7 +5,7 @@ import { Motor } from "./motor3d.js";
 import { IC, GRUPO_IC } from "./iconos.js";
 
 const qs = new URLSearchParams(location.search);
-const ID = (qs.get("p") || "mesa-ratona").replace(/[^a-z0-9-]/g, "");
+const ID = (qs.get("p") || "ch29").replace(/[^a-z0-9-]/g, "");
 const P = (await import(`../productos/${ID}.js`)).default;
 const T = P.textos, S = P.escenas, N = S.length, LAST = N - 1, STEPS = N - 2;
 const KEY = "dege:manual:" + P.id;
@@ -23,6 +23,26 @@ function medir(ev, datos, cadaVez) {
   if (!cadaVez) { if (yaMedido.has(ev)) return; yaMedido.add(ev); }
   try { window.MANUAL_MEDIR && window.MANUAL_MEDIR(ev, { producto: P.id, ...datos }); } catch {}
   dispatchEvent(new CustomEvent("manual:evento", { detail: { evento: ev, producto: P.id, ...datos } }));
+}
+
+// ── selector de producto para el equipo ──
+// Se muestra cuando el manual se abre directo (no dentro del modal de la ficha). Con ?solo se oculta (p. ej. el QR de la caja).
+const enMarco = (() => { try { return window.self !== window.top; } catch { return true; } })();
+if (!enMarco && !qs.has("solo")) {
+  fetch("productos/indice.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : [])).then((lista) => {
+    if (!lista.length) return;
+    const opciones = lista.map((p) => '<option value="' + p.id + '"' + (p.id === ID ? " selected" : "") + ">" + p.codigo + " · " + p.nombre + "</option>").join("")
+      + (lista.some((p) => p.id === ID) ? "" : '<option value="' + ID + '" selected>' + ID.toUpperCase() + "</option>");
+    document.querySelectorAll("[data-elegir]").forEach((el, i) => {
+      el.innerHTML = '<label for="elegir-' + i + '">Ver otro producto</label><span class="caja"><select id="elegir-' + i + '" aria-label="Elegí el producto">' + opciones + "</select></span><small>" + lista.length + " manuales listos</small>";
+      el.hidden = false;
+      el.querySelector("select").addEventListener("change", (e) => {
+        const u = new URL(location.href);
+        u.search = "?p=" + e.target.value;
+        location.href = u.toString();
+      });
+    });
+  }).catch(() => {});
 }
 
 // ── textos fijos del HTML ──
