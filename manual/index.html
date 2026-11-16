@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual de armado · DEGË Muebles</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/manual.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div class="app">
+  <!-- escritorio: explicación al costado del «celular» -->
+  <aside class="side">
+    <img class="logo" data-logo alt="DEGË Muebles">
+    <h1 data-t="ladoTitulo"></h1>
+    <p data-t="ladoCuerpo"></p>
+    <p class="note" data-t="ladoNota"></p>
+    <div class="keys">
+      <span><kbd>→</kbd><em data-t="teclaSig"></em></span>
+      <span><kbd>←</kbd><em data-t="teclaAnt"></em></span>
+      <span><kbd>✋</kbd><em data-t="teclaGirar"></em></span>
+    </div>
+  </aside>
+
+  <main class="story" data-kind="cover">
+    <div class="sbar" aria-hidden="true"><span class="t">9:41</span><span class="isl"></span><span class="ic">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="1"/><rect x="4.9" y="5" width="3.2" height="7" rx="1"/><rect x="9.8" y="2.5" width="3.2" height="9.5" rx="1"/><rect x="14.7" y="0" width="3.2" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 11.8 5.8 9.1a3.8 3.8 0 0 1 5.4 0z"/><path d="M8.5 5.7c1.8 0 3.4.7 4.6 1.9l1.4-1.4a8.5 8.5 0 0 0-12 0l1.4 1.4a6.5 6.5 0 0 1 4.6-1.9z"/><path d="M8.5 2c2.8 0 5.4 1.1 7.3 3L17 3.6A12.5 12.5 0 0 0 0 3.6L1.2 5a10.3 10.3 0 0 1 7.3-3z"/></svg>
+      <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2.4"/><path d="M25 4.4v4.2a2.3 2.3 0 0 0 0-4.2z" fill-opacity=".45"/></svg>
+    </span></div>
+
+    <header class="top">
+      <div class="bars" aria-hidden="true" data-bars></div>
+      <div class="head">
+        <img class="logo" data-logo alt="DEGË Muebles">
+        <div class="ttl"><b data-t="cabecera"></b><span data-headsub></span></div>
+        <button class="ib" data-open aria-label="Todos los pasos"></button>
+      </div>
+    </header>
+
+    <div class="stage-wrap">
+      <div class="stage" data-stage tabindex="0" role="img" aria-label="Animación del paso actual. Arrastrá para girar la mesa.">
+        <canvas data-canvas></canvas>
+        <svg class="cotas" data-cotas aria-hidden="true"></svg>
+      </div>
+      <div class="tit" data-tit aria-hidden="true"><b data-titt></b><span class="cnt" data-cnt></span></div>
+      <div class="hint off" data-hint></div>
+      <button class="ib bigbtn" data-big aria-label="Ver la mesa en grande" aria-pressed="false"></button>
+      <div class="ctl">
+        <div class="stg" data-stg></div>
+        <button class="ib hwbtn" data-hw aria-expanded="false"><span data-hwic></span><span class="hwl" data-hwl></span><span class="bd" data-hwbd>0</span></button>
+        <span class="hwchip" data-hwchip></span>
+        <button class="ib pausebtn" data-pause aria-label="Pausar la animación" aria-pressed="false"></button>
+      </div>
+      <div class="hwpanel" data-hwpanel aria-live="polite"></div>
+    </div>
+
+    <section class="sheet" data-sheet>
+      <div class="card" data-card aria-live="polite"></div>
+    </section>
+
+    <canvas class="confetti" data-confetti aria-hidden="true"></canvas>
+
+    <!-- índice de pasos -->
+    <div class="scrim" data-scrim></div>
+    <div class="index" data-index role="dialog" aria-modal="true" aria-label="Todos los pasos">
+      <header><b>Todos los pasos</b><button class="ib" data-close aria-label="Cerrar"></button></header>
+      <ol data-indexlist></ol>
+    </div>
+
+    <!-- «Antes de arrancar» -->
+    <div class="mom" data-mom role="dialog" aria-modal="true" tabindex="-1"></div>
+
+    <!-- reseña al terminar -->
+    <div class="rv" data-rv role="dialog" aria-modal="true" tabindex="-1"></div>
+  </main>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
