@@ -1,27 +1,26 @@
-// Mesa de 3 patas con 2 travesaños que salen de una misma pata (CH22 gota y las dos mesas del set CH24).
-// ESTIMADO: sale de las fotos y el plano de la ficha; ver estudio/estimados-notas.md.
-import { cil, perfil, agujero, barra, regaton, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=0c6ddde886';
+import { cil, perfil, agujero, barra, regaton, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=b1713398f9';
 
 const R_BARRA = 6;
+export const H_AGUJERO = { 1: 110, 3: 190 };   // altura del agujero de cada caño, desde la punta de abajo
 
-// cfg: { pre, contorno, patas: { a: [x, y], b, c }, hub: 'c', alto, zBarra, off: [dx, dy] }
 export function mesa3(cfg) {
-  const { pre, hub, alto, zBarra } = cfg, off = cfg.off || [0, 0];
+  const { pre, alto } = cfg, off = cfg.off || [0, 0];
   const P = Object.fromEntries(Object.entries(cfg.patas).map(([k, [x, y]]) => [k, [x + off[0], y + off[1]]]));
-  const K = Object.keys(P), lejos = K.filter((k) => k !== hub), zT = alto - 2.5;
-  const dir = (k) => { const v = [P[k][0] - P[hub][0], P[k][1] - P[hub][1]], L = Math.hypot(...v); return [v[0] / L, v[1] / L]; };
-  const regatones = () => K.map((k) => regaton(`${pre}.reg.${k}`, P[k]));
-  const patas = () => K.map((k) => cil(`${pre}.pata.${k}`, [...P[k], REG], zT - REG, R_CANO));
-  const barras = () => lejos.map((k) => { const [dx, dy] = dir(k), a = P[hub], b = P[k];
-    return barra(`${pre}.barra.${k}`, [a[0] + dx * R_CANO, a[1] + dy * R_CANO, zBarra], [b[0] - dx * R_CANO, b[1] - dy * R_CANO, zBarra], R_BARRA); });
-  // tornillos B: en la pata lejana entran desde afuera; en la pata central, desde atrás de la pata
-  const tornB = () => lejos.flatMap((k) => { const [dx, dy] = dir(k), a = P[hub], b = P[k];
-    return [...lateral(`${pre}.B.${k}.lejos`, [b[0] + dx * R_CANO, b[1] + dy * R_CANO, zBarra], [dx, dy, 0]),
-      ...lateral(`${pre}.B.${k}.centro`, [a[0] - dx * R_CANO, a[1] - dy * R_CANO, zBarra], [-dx, -dy, 0])]; });
-  const idsB = () => lejos.flatMap((k) => [`${pre}.B.${k}.lejos`, `${pre}.B.${k}.centro`]).flatMap((id) => [`${id}.cana`, `${id}.cabeza`]);
-  const tapa = () => ({ ...perfil(`${pre}.tapa`, cfg.contorno.map(([x, y]) => [x + off[0], y + off[1]]), zT, 2.5), huecos: K.map((k) => agujero(...P[k])) });
-  const tornA = () => K.flatMap((k) => allen(`${pre}.A.${k}`, P[k], alto));
-  const idsA = () => idsAllen(K.map((k) => `${pre}.A.${k}`));
-  const completa = () => [...regatones(), ...patas(), ...barras(), ...tornB(), tapa(), ...tornA()];
-  return { P, K, hub, lejos, zT, dir, regatones, patas, barras, tornB, idsB, tapa, tornA, idsA, completa };
+  const zT = alto - 2.5, z = (k) => REG + H_AGUJERO[k];
+  const dir = (k) => { const v = [P[k][0] - P[2][0], P[k][1] - P[2][1]], L = Math.hypot(...v); return [v[0] / L, v[1] / L]; };
+  const reg = (k) => regaton(`${pre}.reg.${k}`, P[k]);
+  const pata = (k) => cil(`${pre}.cano.${k}`, [...P[k], REG], zT - REG, R_CANO);
+  const travesano = (k) => { const [dx, dy] = dir(k), a = P[2], b = P[k];
+    return barra(`${pre}.trav.${k}`, [a[0] + dx * R_CANO, a[1] + dy * R_CANO, z(k)], [b[0] - dx * R_CANO, b[1] - dy * R_CANO, z(k)], R_BARRA); };
+  const tornA = (k, punta) => { const [dx, dy] = dir(k), a = P[2], b = P[k];
+    return punta === 'lejos' ? lateral(`${pre}.A.${k}.lejos`, [b[0] + dx * R_CANO, b[1] + dy * R_CANO, z(k)], [dx, dy, 0])
+      : lateral(`${pre}.A.${k}.centro`, [a[0] - dx * R_CANO, a[1] - dy * R_CANO, z(k)], [-dx, -dy, 0]); };
+  const idsA = (k, punta) => [`${pre}.A.${k}.${punta}.cana`, `${pre}.A.${k}.${punta}.cabeza`];
+  const chapa = () => ({ ...perfil(`${pre}.chapa`, cfg.contorno.map(([x, y]) => [x + off[0], y + off[1]]), zT, 2.5), huecos: [1, 2, 3].map((k) => agujero(...P[k])) });
+  const tornB = () => [1, 2, 3].flatMap((k) => allen(`${pre}.B.${k}`, P[k], alto));
+  const idsB = () => idsAllen([1, 2, 3].map((k) => `${pre}.B.${k}`));
+  const patas = () => [1, 2, 3].flatMap((k) => [reg(k), pata(k)]);
+  const estructura = () => [...patas(), travesano(1), travesano(3), ...tornA(1, 'lejos'), ...tornA(1, 'centro'), ...tornA(3, 'lejos'), ...tornA(3, 'centro')];
+  const completa = () => [...estructura(), chapa(), ...tornB()];
+  return { P, z, dir, reg, pata, travesano, tornA, idsA, chapa, tornB, idsB, patas, estructura, completa };
 }

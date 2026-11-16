@@ -1,85 +1,100 @@
-// CH22 · Mesa ratona gota. ESTIMADO: no hay manual de fábrica en el Drive. Sale de la foto de portada y del plano de la
-// ficha (88 × 57 × 34 cm, 3 patas, 2 travesaños). Pasos y herrajes, a confirmar: ver estudio/estimados-notas.md.
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, cil, perfil } from './_estimado.js?v=0c6ddde886';
-import { mesa3 } from './_tres_patas.js?v=0c6ddde886';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, gota, cil, perfil } from './_estimado.js?v=b1713398f9';
+import { mesa3 } from './_tres_patas.js?v=b1713398f9';
 
 const TAPA = gota(880, 570);
-// dos patas del lado ancho (+X: adelante y atrás) y una en la punta angosta, de la que salen los dos travesaños
-const M = mesa3({ pre: 'g', contorno: TAPA, patas: { a: [300, 165], b: [170, -195], c: [-350, 0] }, hub: 'c', alto: 340, zBarra: 70 });
-const NA = 4, paso = P_(NA, { yaw: -24, pitch: 22 });
+const M = mesa3({ pre: 'g', contorno: TAPA, patas: { 1: [300, 165], 2: [-350, 0], 3: [170, -195] }, alto: 340 });
+const NA = 7, paso = P_(NA, { yaw: -24, pitch: 22 });
+const herramientaA = (k, punta) => { const [dx, dy] = M.dir(k), b = punta === 'lejos' ? M.P[k] : M.P[2], s = punta === 'lejos' ? 1 : -1;
+  return { tipo: 'phillips', pos: [b[0] + s * dx * (11 + 3), b[1] + s * dy * (11 + 3), M.z(k)], eje: [s * dx, s * dy, 0] }; };
 
 const acostado = (id, x, y, largo, r) => cil(id, [x, y, r], largo, r, 'chapa', { eje: [1, 0, 0] });
 const ordenPiezas = () => [
-  manta(1250, 900),
-  { ...perfil('pz.1', TAPA.map(([x, y]) => [x * .7 - 150, y * .7 + 170]), 0, 2.5) },
-  { id: 'rotulo.1', tipo: 'texto', txt: '1 · TAPA', pos: [-150, 380, .3], alto: 30 },
-  ...[0, 1, 2].map((i) => acostado('pz.2.' + i, 220, -120 + i * 50, 325, 11)),
-  { id: 'rotulo.2', tipo: 'texto', txt: '2 · PATAS ×3', pos: [380, -210, .3], alto: 26 },
-  ...[0, 1].map((i) => acostado('pz.3.' + i, -480, -150 + i * 40, 560, 6)),
-  { id: 'rotulo.3', tipo: 'texto', txt: '3 · TRAVESAÑOS ×2', pos: [-200, -230, .3], alto: 26 },
+  manta(1300, 920),
+  perfil('pz.5', TAPA.map(([x, y]) => [x * .7 - 170, y * .7 + 180]), 0, 2.5),
+  { id: 'rotulo.5', tipo: 'texto', txt: '5 · CHAPA', pos: [-170, 400, .3], alto: 30 },
+  acostado('pz.1', 230, 200, 325, 11), { id: 'rotulo.1', tipo: 'texto', txt: '1 · CAÑO', pos: [395, 250, .3], alto: 24 },
+  acostado('pz.2', 230, 110, 325, 11), { id: 'rotulo.2', tipo: 'texto', txt: '2 · CAÑO', pos: [395, 160, .3], alto: 24 },
+  acostado('pz.3', 230, 20, 325, 11), { id: 'rotulo.3', tipo: 'texto', txt: '3 · CAÑO', pos: [395, 70, .3], alto: 24 },
+  ...[0, 1].map((i) => acostado('pz.4.' + i, -500, -170 + i * 40, 560, 6)),
+  { id: 'rotulo.4', tipo: 'texto', txt: '4 · TRAVESAÑOS ×2', pos: [-220, -250, .3], alto: 24 },
 ];
+const IDS_A = (pares) => pares.flatMap(([k, p]) => M.idsA(k, p));
 
 export default {
-  id: 'ch22', version: 1, pasosManual: NA, estimado: true,
+  id: 'ch22', version: 2, pasosManual: NA,
   marca: marca('https://dege.com.ar/productos/mesa-ratona-gota-b20g3/', ['#3a3a3a', '#ffffff', '#e9e4d6', '#c9ced3']),
   materiales: MATS('#3d3d3d'),
-  inventario: [{ id: 'C', n: 3, label: 'C · Regatones' }, { id: 'B', n: 4, label: 'B · Tornillos de travesaños' }, { id: 'A', n: 3, label: 'A · Tornillos Allen' }],
+  inventario: [{ id: 'C', n: 3, label: 'C · Regatones' }, { id: 'A', n: 4, label: 'A · Tornillos (Phillips)' }, { id: 'B', n: 3, label: 'B · Tornillos Allen' }],
+  herramientas: [{ id: 'D', n: 1, label: 'D · Llave Allen', incluida: true }, { id: 'phillips', n: 1, label: 'Destornillador Phillips', incluida: false }],
   textos: textos({
     nombre: 'Mesa ratona gota', codigo: 'CH22', cabecera: 'Mesa ratona gota CH22', sust: 'mesa', art: 'la',
-    ladoCuerpo: 'Una tapa en forma de gota, tres patas y dos travesaños. Seguí los pasos y girá el modelo para ver cada unión.',
+    ladoCuerpo: 'Una chapa en forma de gota, tres caños y dos travesaños. Seguí los 7 pasos del manual de fábrica y girá el modelo para ver cada unión.',
     datos: [['layers', '6 piezas', '+ 10 herrajes'], ['steps', `${NA} pasos`, 'llave Allen incluida'], ['box', '88 × 57 × 34', 'cm · largo, fondo y alto']],
-    momTitulo: 'Tu mesa,<br><em>en 15 minutos</em>', momCuerpo: 'Tres patas, dos travesaños y la tapa. La llave Allen viene en la caja.',
+    momTitulo: 'Tu mesa,<br><em>en 15 minutos</em>', momCuerpo: 'Tres caños, dos travesaños y la chapa. La llave Allen viene en la caja; para los travesaños vas a usar un destornillador Phillips.',
     finCuerpo: 'La curva ancha va hacia el sillón y la punta angosta deja pasar.',
   }),
   cotas: { w: 88, d: 57, h: 34, unidad: 'cm', llenar: .66, caja: [-440, 440, -285, 285, 0, 343], lineas: [
     [[440, 285, 0], [-440, 285, 0], [0, 70, 0], 88],
     [[440, 285, 0], [440, -285, 0], [80, 0, 0], 57],
-    [[...M.P.c, 0], [...M.P.c, 340], [-130, 0, 0], 34],
+    [[...M.P[2], 0], [...M.P[2], 340], [-130, 0, 0], 34],
   ] },
   escenas: [
     { id: 'portada', grupo: 'Portada', vista: { yaw: -22, pitch: 24 }, piezas: M.completa(), mueven: [] },
     {
       id: 'orden', grupo: 'Antes de empezar', titulo: 'Ordená las piezas', titular: 'Revisá que estén todas',
-      subs: { a: ['Sacá todo de la caja: la tapa, 3 patas y 2 travesaños.', 'El número es el que vas a ver en cada paso.'], b: [], tip: 'Los travesaños son los caños finitos y largos.' },
-      usa: ['1 · Tapa', '2 · Patas ×3', '3 · Travesaños ×2'],
-      elegir: [{ m: ['pz.1'], t: 'Es la tapa en forma de gota, con un agujero para cada pata.' }, { m: ['pz.2'], t: 'Son las 3 patas.' }, { m: ['pz.3'], t: 'Son los 2 travesaños: unen las patas abajo.' }],
-      cuenta: { fijo: '6 piezas · 3 tipos' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 62 }, piezas: ordenPiezas(), resaltar: ['pz.1'], mueven: [mover('pz.1', 80)],
+      subs: { a: ['Sacá todo de la caja: la chapa, tres caños y dos travesaños.', 'Mirá los agujeros de cada caño: así sabés cuál es cuál.'], b: [], tip: 'El caño 2 tiene dos agujeros (a 11 y a 19 cm de la punta); el 1 tiene uno a 11 cm y el 3, uno a 19 cm.' },
+      usa: ['5 · Chapa', '1 · Caño', '2 · Caño', '3 · Caño', '4 · Travesaños ×2'],
+      elegir: [{ m: ['pz.5'], t: 'Es la chapa en forma de gota, con un agujero para cada caño.' }, { m: ['pz.2'], t: 'Es el caño 2: tiene dos agujeros y de él salen los dos travesaños.' }, { m: ['pz.1', 'pz.3'], t: 'Son los caños 1 y 3: cada uno tiene un agujero, a distinta altura.' }, { m: ['pz.4'], t: 'Son los 2 travesaños: unen los caños abajo.' }],
+      cuenta: { fijo: '6 piezas · 4 tipos' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 62 }, piezas: ordenPiezas(), resaltar: ['pz.2'], mueven: [mover('pz.2', 80)],
     },
     {
       id: 'herrajes', grupo: 'Antes de empezar', titulo: 'Contá los herrajes', titular: 'Contá antes de armar',
-      subs: { a: ['Son 3 tornillos Allen, 4 tornillos de travesaños, 3 regatones y la llave.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: '' },
-      usa: ['Llave Allen incluida'], check: [[3, 'A · Tornillos Allen'], [4, 'B · Tornillos de travesaños'], [3, 'C · Regatones'], [1, 'Llave Allen']],
+      subs: { a: ['Son 4 tornillos A, 3 tornillos B, 3 regatones C y la llave Allen D.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: 'Los tornillos A, chiquitos y con cruz, van con un destornillador Phillips: no viene en la caja.' },
+      usa: ['D · Llave Allen incluida', 'Destornillador Phillips (no incluido)'], check: [[4, 'A · Tornillos'], [3, 'B · Tornillos Allen'], [3, 'C · Regatones'], [1, 'D · Llave Allen']],
       cuenta: { fijo: '10 herrajes · 1 llave' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 56 },
-      piezas: herrajes([{ letra: 'A', n: 3, tipo: 'allen' }, { letra: 'B', n: 4, tipo: 'tornillo' }, { letra: 'C', n: 3, tipo: 'regaton' }]), resaltar: ['llave'], mueven: [mover('llave', 90)],
+      piezas: herrajes([{ letra: 'A', n: 4, tipo: 'tornillo' }, { letra: 'B', n: 3, tipo: 'allen' }, { letra: 'C', n: 3, tipo: 'regaton' }]), resaltar: ['llave'], mueven: [mover('llave', 90)],
     },
-    paso(1, 'regatones', 'Un regatón en cada pata', ['Enroscá un regatón C en una punta de cada pata.'], [manta(), ...M.regatones(), ...M.patas()], {
-      usa: ['2 · Patas ×3', 'C · Regatones ×3'], hw: { C: 3 }, titular: 'Hasta el tope', resaltar: ['g.reg'], unir: ['g.pata'],
+    paso(1, 'regatones', 'Un regatón en cada caño', ['Enroscá un regatón C en una punta de los caños 1, 2 y 3.'], [manta(), ...M.patas()], {
+      usa: ['1, 2 y 3 · Caños', 'C · Regatones ×3'], hw: { C: 3 }, titular: 'En la punta más cerca de los agujeros', resaltar: ['g.reg'], unir: ['g.cano'],
+      subs: { a: ['Enroscá un regatón C en una punta de los caños 1, 2 y 3.'], b: [], tip: 'El regatón va en la punta más cerca de los agujeros. El manual de papel dice "caños A, B y C": son los caños 1, 2 y 3.' },
       mueven: [mover('g.reg', 50, [0, 0, -1], 0)], vista: { yaw: -24, pitch: 26 },
     }),
-    paso(2, 'travesanos', 'Los travesaños', [
-      'Apoyá los dos travesaños entre la pata de la punta y las otras dos.',
-    ], [manta(), ...M.regatones(), ...M.patas(), ...M.barras(), ...M.tornB()], {
-      usa: ['3 · Travesaños ×2', 'B · Tornillos ×4', 'Llave Allen'], hw: { B: 4 }, titular: 'Los dos salen de la misma pata', resaltar: ['g.barra', 'g.B'], unir: ['g.pata'],
-      subs: { a: ['Apoyá los dos travesaños entre la pata de la punta y las otras dos.'], b: ['Atornillá cada punta con un tornillo B desde afuera de la pata.', 'Ajustalos con la llave Allen, sin forzar.'], tip: 'A confirmar con fábrica: la forma exacta de la unión del travesaño.' },
-      mueven: [mover('g.barra', 90, [0, 0, 1], 0), mover('g.B', 40, [0, 0, 1], .5)],
-      fases: {
-        pieza: ['g.barra'], hw: M.idsB(), retener: ['g.B'], ocultarEnA: M.idsB(),
-        ref: 'g.B.a.lejos', vistaB: { yaw: -40, pitch: 14 }, titularB: 'Un tornillo en cada punta',
-        herramienta: { tipo: 'allen', pos: (() => { const [dx, dy] = M.dir('a'); return [M.P.a[0] + dx * 14, M.P.a[1] + dy * 14, 70]; })(), eje: [...M.dir('a'), 0] },
-      },
+    paso(2, 'trav-2', 'Un travesaño al caño 2', ['Uní un travesaño 4 al agujero de arriba del caño 2.'], [manta(), M.reg(2), M.pata(2), M.travesano(3), ...M.tornA(3, 'centro')], {
+      usa: ['2 · Caño', '4 · Travesaño', 'A · Tornillo', 'Destornillador Phillips'], hw: { A: 1 }, titular: 'El agujero de 19 cm', resaltar: ['g.trav.3', 'g.A.3.centro'], unir: ['g.cano.2'],
+      subs: { a: ['Uní un travesaño 4 al agujero de arriba del caño 2.'], b: ['Fijalo con un tornillo A y el destornillador.'], tip: '' },
+      mueven: [mover('g.trav.3', 120, [0, 0, 1], 0), mover('g.A.3.centro', 40, [...M.dir(3).map((n) => -n), 0], .5)],
+      fases: { pieza: ['g.trav.3'], hw: M.idsA(3, 'centro'), retener: ['g.A.3.centro'], ocultarEnA: M.idsA(3, 'centro'), ref: 'g.A.3.centro', vistaB: { yaw: 70, pitch: 14 }, titularB: 'Un tornillo A', herramienta: herramientaA(3, 'centro') },
+      vista: { yaw: 40, pitch: 22 },
     }),
-    paso(3, 'tapa', 'La tapa', ['Apoyá la tapa con cada agujero sobre una pata.'], [manta(), ...M.completa()], {
-      usa: ['1 · Tapa', 'A · Tornillos Allen ×3', 'Llave Allen'], hw: { A: 3 }, titular: 'La parte ancha, sobre las dos patas', resaltar: ['g.tapa', 'g.A'], unir: ['g.pata'],
-      subs: { a: ['Apoyá la tapa con cada agujero sobre una pata.'], b: ['Poné un tornillo Allen A en cada agujero.', 'Ajustalos con la llave hasta que la mesa quede firme.'], tip: 'La punta angosta de la tapa va sobre la pata de la que salen los travesaños.' },
-      mueven: [mover('g.tapa', 150, [0, 0, 1], 0), mover('g.A', 70, [0, 0, 1], .6)],
-      fases: {
-        pieza: ['g.tapa'], hw: M.idsA(), retener: ['g.A'], ocultarEnA: M.idsA(),
-        ref: 'g.A.a', vistaB: { yaw: -24, pitch: 56 }, titularB: 'Un tornillo en cada pata',
-        herramienta: { tipo: 'allen', pos: [...M.P.a, 343] },
-      },
+    paso(3, 'trav-1', 'El otro travesaño al caño 1', ['Uní el otro travesaño 4 al caño 1.'], [manta(), M.reg(2), M.pata(2), M.travesano(3), ...M.tornA(3, 'centro'), M.reg(1), M.pata(1), M.travesano(1), ...M.tornA(1, 'lejos')], {
+      usa: ['1 · Caño', '4 · Travesaño', 'A · Tornillo'], hw: { A: 1 }, titular: 'El agujero de 11 cm', resaltar: ['g.trav.1', 'g.A.1.lejos'], unir: ['g.cano.1'],
+      subs: { a: ['Uní el otro travesaño 4 al caño 1.'], b: ['Fijalo con un tornillo A.'], tip: 'Todavía son dos partes sueltas: en el paso 4 se juntan.' },
+      mueven: [mover(['g.reg.1', 'g.cano.1', 'g.trav.1', 'g.A.1.lejos'], 160, [1, 0, 0], 0)],
+      fases: { pieza: ['g.trav.1'], hw: M.idsA(1, 'lejos'), retener: ['g.A.1.lejos'], ocultarEnA: M.idsA(1, 'lejos'), ref: 'g.A.1.lejos', vistaB: { yaw: -50, pitch: 14 }, titularB: 'Un tornillo A', herramienta: herramientaA(1, 'lejos') },
+      vista: { yaw: -30, pitch: 22 },
     }),
-    paso(4, 'revisar', 'Revisá que esté firme', ['Repasá los 7 tornillos con la llave.', 'Si la mesa se mueve, ajustá un poco más.'], [manta(), ...M.completa()], {
-      usa: ['Llave Allen'], titular: 'Que no se mueva nada', sinFantasma: true, resaltar: ['g.A', 'g.B'], vista: { yaw: -34, pitch: 20 },
+    paso(4, 'unir', 'Uní todo con el caño 3', [
+      'Uní la punta libre del travesaño del caño 1 al agujero de abajo del caño 2.',
+      'Y la punta libre del otro travesaño, al caño 3.',
+    ], [manta(), ...M.estructura()], {
+      subs: { a: ['Uní la punta libre del travesaño del caño 1 al agujero de abajo del caño 2.', 'Y la punta libre del otro travesaño, al caño 3.'], b: ['Fijá cada unión con un tornillo A y el destornillador.'], tip: '' },
+      usa: ['3 · Caño', 'A · Tornillos ×2'], hw: { A: 2 }, titular: 'Dos tornillos A más', resaltar: ['g.cano.3', 'g.reg.3', 'g.A.1.centro', 'g.A.3.lejos'], unir: ['g.trav.1', 'g.trav.3'],
+      mueven: [mover(['g.cano.3', 'g.reg.3'], 160, [...M.dir(3), 0], 0)],
+      fases: { pieza: ['g.cano.3', 'g.reg.3'], hw: IDS_A([[1, 'centro'], [3, 'lejos']]), retener: [], ocultarEnA: IDS_A([[1, 'centro'], [3, 'lejos']]), ref: 'g.A.3.lejos', vistaB: { yaw: -100, pitch: 14 }, titularB: 'Un tornillo en cada punta', herramienta: herramientaA(3, 'lejos') },
+      vista: { yaw: -24, pitch: 24 },
+    }),
+    paso(5, 'chapa', 'La chapa', ['Apoyá la chapa 5 alineando sus agujeros con los de los tres caños.'], [manta(), ...M.estructura(), M.chapa()], {
+      usa: ['5 · Chapa'], titular: 'La punta angosta, sobre el caño 2', resaltar: ['g.chapa'], unir: ['g.cano'],
+      mueven: [mover('g.chapa', 150, [0, 0, 1], 0)],
+    }),
+    paso(6, 'tornillos', 'Los tornillos B', ['Poné un tornillo B en cada agujero de la chapa.'], [manta(), ...M.completa()], {
+      usa: ['B · Tornillos Allen ×3', 'D · Llave Allen'], hw: { B: 3 }, titular: 'Con la llave Allen', resaltar: ['g.B'], unir: ['g.chapa'],
+      subs: { a: ['Poné un tornillo B en cada agujero de la chapa.'], b: ['Ajustalos con la llave Allen hasta que la mesa quede firme.'], tip: '' },
+      mueven: [mover('g.B', 70, [0, 0, 1], 0)],
+      fases: { pieza: ['g.B.1.cabeza'], hw: M.idsB(), retener: ['g.B'], ocultarEnA: M.idsB(), ref: 'g.B.1', vistaB: { yaw: -24, pitch: 56 }, titularB: 'Un tornillo en cada caño', herramienta: { tipo: 'allen', pos: [...M.P[1], 343] } },
+    }),
+    paso(7, 'revisar', 'Revisá que esté firme', ['Repasá los 7 tornillos.', 'Si la mesa se mueve, ajustá un poco más.'], [manta(), ...M.completa()], {
+      usa: ['D · Llave Allen', 'Destornillador Phillips'], titular: 'Que no se mueva nada', sinFantasma: true, resaltar: ['g.A', 'g.B'], vista: { yaw: -34, pitch: 20 },
     }),
     { id: 'fin', grupo: 'Listo', vista: { yaw: -22, pitch: 20 }, piezas: M.completa(), mueven: [] },
   ],

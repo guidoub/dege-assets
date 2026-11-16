@@ -318,6 +318,9 @@ export class Motor {
       cuerpo.add(malla);
       nodo.userData.mallas.push(malla);
       nodo.userData.decal = true;
+      // Los nombres de las piezas (tipo "texto") se dibujan como etiquetas de pantalla (app.js → rotulos): pintados
+      // sobre la manta se achicaban con el zoom y en el celular no se leían. La malla queda solo para ubicarlos.
+      if (p.tipo === "texto") { malla.visible = false; nodo.userData.rotulo = p.txt; }
       return nodo;
     }
     if (p.tipo === "manta") {
@@ -423,6 +426,7 @@ export class Motor {
       nodo.visible = !st.oculta;
       const U = nodo.userData;
       const op = st.opacidad ?? 1;
+      U.op = op;
       for (const m of U.mallas) {
         if (U.decal) { m.material.opacity = op; continue; }
         if (U.manta) continue;
@@ -478,6 +482,20 @@ export class Motor {
     for (const [id, nodo] of E.nodos) if (nodo.visible && filtro(id, nodo.userData)) sumar(nodo);
     if (E.herramienta && E.herramienta.visible && filtro("llave3d", {})) for (const n of E.herramienta.userData.partes) sumar(n);
     return B;
+  }
+
+  // etiquetas de las piezas de la escena i: texto y posición en el plano de la cámara (mm)
+  rotulos(i) {
+    const E = this.escenas[i], out = [];
+    if (!E) return out;
+    E.grupo.updateMatrixWorld(true);
+    for (const [id, nodo] of E.nodos) {
+      const U = nodo.userData;
+      if (!U.rotulo) continue;
+      U.mallas[0].getWorldPosition(this._v);
+      out.push({ id, txt: U.rotulo, x: this._v.dot(this.right), y: this._v.dot(this.upv), op: nodo.visible ? (U.op ?? 1) : 0 });
+    }
+    return out;
   }
 
   tamano(w, h) {

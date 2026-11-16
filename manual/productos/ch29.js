@@ -1,5 +1,3 @@
-// CH29 · manual de fábrica p1–p6 y fotos locales. Medidas ilustrativas en mm.
-// +X = abertura de la U; +Y = adelante; Z arriba. Ver estudio/ch29-notas.md.
 const APOYOS = [['curva', -122.5, 0], ['adelante', -25, 97.5], ['atras', -25, -97.5]];
 const FIELTROS = [[122.5, 97.5], [122.5, -97.5], [-94, 69], [-94, -69]];
 const cilindro = (id, pos, s1, r, mat = 'chapa', eje = [0, 0, 1]) => ({ id, tipo: 'cilindro', pos, eje, s0: 0, s1, r, mat });
@@ -9,7 +7,6 @@ const tapa = () => [placa('tapa', [20, 0, 647], 400, 270, 3, 'chapa', 'estadio')
 const canos = () => APOYOS.map(([n, x, y]) => cilindro('cano.' + n, [x, y, 8], 639, 11));
 const base = (marcas = false) => [
   { ...placa('base', [0, 0, 3], 300, 250, 5, 'chapa', 'u'), banda: 55 },
-  // Discos concéntricos ilustran la boca avellanada en la cara exterior.
   ...(marcas ? APOYOS.flatMap(([n, x, y]) => [
     cilindro('base.avellanado.' + n, [x, y, 2.85], .15, 6, 'bisel'),
     cilindro('base.agujero.' + n, [x, y, 2.7], .15, 3, 'oscuro'),
@@ -17,14 +14,12 @@ const base = (marcas = false) => [
 ];
 const tornillos = () => APOYOS.flatMap(([n, x, y]) => [
   cilindro('A.' + n + '.cana', [x, y, 3], 16, 2.5, 'zinc'),
-  // Cabeza al ras; la conicidad queda simplificada dentro del espesor de la base.
   cilindro('A.' + n + '.cabeza', [x, y, 2.8], .2, 5.5, 'zinc'),
   placa('A.' + n + '.cruz.x', [x, y, 2.65], 7, 1.2, .15, 'oscuro'),
   placa('A.' + n + '.cruz.y', [x, y, 2.65], 1.2, 7, .15, 'oscuro'),
 ]);
 const felpas = () => FIELTROS.map(([x, y], i) => cilindro('felpa.' + i, [x, y, 0], 3, 9, 'fieltro'));
 const mesa = (conFelpas = true) => [...tapa(), ...canos(), ...base(), ...tornillos(), ...(conFelpas ? felpas() : [])];
-// Giro rígido de 180° sobre Y: la cara superior de la tapa queda en la manta (z=0).
 const bocaAbajo = ps => ps.map(p => ({ ...p, pos: [-p.pos[0], p.pos[1], 650 - p.pos[2]], eje: (p.eje || [0, 0, 1]).map((v, i) => i === 1 ? v : -v) }));
 const manta = { id: 'manta', tipo: 'manta', w: 650, d: 510, mat: 'carton' };
 const mover = (p, recorrido = 80, demora = 0) => ({ nombre: p, p, recorrido, demora });
@@ -46,8 +41,6 @@ export default {
     momCta: 'Empezar a armar', finTitulo: '¡Tu CH29 <em>está lista</em>!', finCuerpo: 'Ya tenés tu mueble armado. Revisá que apoye firme y disfrutá tu mesa de arrime.', finTip: 'Guardá el manual para repasar los ajustes cuando haga falta.',
     waTexto: '¡Hola DEGË! Estoy armando la Mesa de arrime CH29 y tengo una duda.', pie: 'DEGË Muebles · De Rosario a todo el país.', rvEjemplos: ['La armé en minutos', 'Re claro el paso a paso', 'Ya tengo mi CH29 lista'],
   },
-  // 40 × 27 es la TAPA: esas cotas van a la altura de la tapa (no en el piso, donde la base mide 30 × 25).
-  // Puntos sobre el mueble y desplazamientos paralelos al piso. Tapa: x −180…220, rectas de los lados x −45…85.
   cotas: { w: 40, d: 27, h: 65, unidad: 'cm', caja: [-180, 220, -135, 135, 0, 650], lineas: [
     [[-180, 0, 650], [220, 0, 650], [0, -200, 0], 40],
     [[-45, 135, 650], [-45, -135, 650], [-190, 0, 0], 27],

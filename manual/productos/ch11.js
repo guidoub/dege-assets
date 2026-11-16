@@ -1,10 +1,3 @@
-// CH11 · Recibidor (dressoire).
-// Fuentes: "Manual de armado Dressoire CH11.pdf" (Drive › Manuales de armado, 4 p.), ficha de medidas de la web
-// (87 × 25 × 92 cm, 9 cm entre la tapa y el primer estante) y fotos. mm · Z arriba · piso z = 0 · adelante = +Y
-// (con la cámara de frente, +X queda a la izquierda). Ver estudio/ch11-notas.md.
-//
-// Mismo sistema que la CH08: 4 patas alternadas (una en cada punta, dos cerca del medio: una adelante y otra atrás).
-// Niveles: pie de 9 cm → chapa de abajo → caño de 71,5 → chapa del medio → caño de 9 → tapa.
 
 const A = 310, RC = 125;                 // óvalo 87 × 25: rectas de ±310 y radio 125
 const CHAPA = 2.5, PATA_PL = 12, L_CORTO = 90, L_LARGO = 715, R_CANO = 12.5;
@@ -56,7 +49,6 @@ const recibidor = () => [...nivel2(), ...cortos(), chapa('chapa.3', Z3), ...torn
 
 const manta = (w = 1250, d = 620, extra = {}) => ({ id: 'manta', tipo: 'manta', w, d, r: 22, mat: 'carton', ...extra });
 
-// ── «Ordená las piezas» ──
 const acostado = (id, x, y, largo) => cil(id, [x, y, R_CANO], largo, R_CANO, 'chapa', { eje: [1, 0, 0] });
 const ordenPiezas = () => [
   manta(1700, 1000, { pos: [0, -30, 0] }),

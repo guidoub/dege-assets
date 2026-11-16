@@ -1,10 +1,7 @@
-// M10 · fuente: manual de fábrica p1–p11 y estudio/PEDIDO-m10.md.
-// mm, Z arriba, +Y adelante. Geometría ilustrativa: ver estudio/m10-notas.md.
 const caja = (id, pos, w, d, h, mat = 'ocre') => ({ id, tipo: 'perfil', forma: 'redondeada', r: 0, pos, w, d, z0: 0, z1: h, mat });
 const tubo = (id, pos, eje, largo, r, mat = 'ocre') => ({ id, tipo: 'cilindro', pos, eje, s0: 0, s1: largo, r, mat, seg: 20 });
 const mover = (p, recorrido = 100, dir = [0, 0, 1], demora = 0) => ({ nombre: Array.isArray(p) ? p.join('+') : p, p, recorrido, dir, demora });
 const trasladar = (ps, v) => ps.map(p => ({ ...p, pos: p.pos.map((n, i) => n + v[i]) }));
-// Giro rígido alrededor de Y: conserva la orientación de perfiles y cilindros.
 const acostar = (ps, signo) => ps.map(p => {
   const giro = ([x, y, z]) => [signo * z, y, -signo * x];
   const q = giro(p.pos);
@@ -45,7 +42,6 @@ const grandes = () => [1189, 937].map((z, i) => tubo('grande.' + i, [-426, 27, z
 const E = () => lados.flatMap(([n, x]) => [1189, 937].flatMap((z, i) => tornillo(`E.${n}.${i}`, [x + Math.sign(x) * 13, 27, z], [-Math.sign(x), 0, 0], 28, 8)));
 const chico = () => [tubo('chico', [-420, -108, 90], [1, 0, 0], 840, 8.5)];
 const F = () => lados.flatMap(([n, x]) => tornillo('F.' + n, [x + Math.sign(x) * 19, -108, 90], [-Math.sign(x), 0, 0], 58));
-// Planchuelas con ocho ranuras abiertas (dos bordes y nueve puentes).
 const soportesTV = () => [-170, 170].flatMap((x, i) => {
   const id = 'tv.soporte.' + i;
   return [...[-14, 14].map((dx, j) => caja(id + '.borde.' + j, [x + dx, 42, 912], 14, 4, 420, 'zinc')),

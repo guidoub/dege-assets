@@ -1,8 +1,4 @@
-// M06 · Perchero industrial (melamina y caño). ESTIMADO: no hay manual de fábrica en el Drive. Sale de las fotos y del
-// plano de la ficha (68 × 30 × 167 cm; 3 estantes abajo, tabla con 3 perillas arriba, 2 ganchos en los caños). La
-// estructura sigue al perchero CH35 (versión de chapa, con manual real): ganchos apretados entre dos caños.
-// Ver estudio/estimados-notas.md.
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=0c6ddde886';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, lateral, REG, R_CANO } from './_estimado.js?v=b1713398f9';
 
 const W = 680, D = 300, E = 15, H = 1670;
 const P = { fi: [315, 125], fd: [-315, 125], ti: [315, -125], td: [-315, -125] }, K = Object.keys(P), ATRAS = ['ti', 'td'], ADEL = ['fi', 'fd'];
@@ -19,7 +15,6 @@ const gancho = (k) => {
     caja(`gancho.${k}.punta`, Math.min(xt, xt + s * 3), Math.max(xt, xt + s * 3), y - 8, y + 8, ZJ, 24),
   ];
 };
-// tabla de arriba: vertical, delante de los caños de atrás, con 3 perillas; 2 tornillos de frente a los caños
 const TY = -125 + R_CANO, ZT0 = ZTOP - 10;
 const tablaArriba = () => [
   { id: 'percha.tabla', tipo: 'perfil', puntos: [[-W / 2, 0], [W / 2, 0], [W / 2, 70], [-W / 2, 70]], pos: [0, TY + E, ZT0], z0: 0, z1: E, mat: 'madera', rotacion: [90, 0, 0] },

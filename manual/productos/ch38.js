@@ -1,5 +1,3 @@
-// CH38 · manual de fábrica p1–p9, ficha y caja. Ver estudio/ch38-notas.md.
-// mm; Z arriba, +Y adelante. Dimensiones internas ilustrativas, no de fabricación.
 const H = 640, MIN = 570, MAX = 700, Z_C = 440;
 const LADOS = [['izq', -1], ['der', 1]];
 const APOYOS = [[-118, -118], [118, -118], [-118, 118], [118, 118]];
@@ -7,7 +5,6 @@ const placa = (id, pos, w, d, h, mat = 'metal', extra = {}) => ({ id, tipo: 'per
 const cilindro = (id, pos, eje, largo, r, mat = 'zinc', extra = {}) => ({ id, tipo: 'cilindro', pos, eje, s0: 0, s1: largo, r, mat, ...extra });
 const agujero = (x, y, diametro = 6) => ({ x, y, w: diametro, d: diametro, r: diametro / 2 });
 const poligono = (id, pos, puntos, h, mat = 'metal', extra = {}) => placa(id, pos, 1, 1, h, mat, { puntos, ...extra });
-// Mariposa del manual (C): cruz de cuatro lóbulos con puntas redondeadas, no una "+" de cantos vivos.
 const trebol = (largo = 22, ancho = 7.5, n = 10) => {
   const pts = [];
   for (let k = 0; k < 4; k++) {
@@ -26,13 +23,11 @@ const cruz = (id, pos, eje, tam = 7) => [
 
 const tapa = (h = H) => [
   placa('tapa', [0, -110, h - 3], 490, 300, 3, 'metal', { r: 24, huecos: [{ x: 0, y: 125, w: 90, d: 25, r: 12.5 }] }),
-  // Soporte solidario a la tapa que recibe el perfil U, visible en p4–p5.
   ...LADOS.map(([n, s]) => placa('tapa.soporte.' + n, [s < 0 ? -30 : 27, 0, h - 28], 50, 46, 3, 'metal', { eje: [1, 0, 0], huecos: [agujero(2, 0)] })),
   placa('tapa.soporte.frente', [0, 23, h - 53], 60, 3, 50),
   ...LADOS.map(([n, s]) => poligono('tapa.refuerzo.' + n, [s * 30, 0, h - 3], [[0, -95], [0, -23], [45, -23]], 3, 'metal', { eje: [1, 0, 0] })),
 ];
 const corredera = (h = H) => [
-  // Frente con canaleta pasante; laterales separados dejan la U abierta hacia -Y.
   placa('corredera.frente', [0, 20, h - 153], 54, 300, 3, 'metal', { eje: [0, 1, 0], r: 4,
     huecos: [{ x: 0, y: 42, w: 8, d: 148, r: 4 }] }),
   ...LADOS.map(([n, s]) => placa('corredera.' + n, [s < 0 ? -27 : 24, -1.5, h - 153], 300, 43, 3, 'metal', { eje: [1, 0, 0], r: 4, huecos: [agujero(-123, 1.5)] })),
@@ -44,11 +39,9 @@ const fijacionTapa = (h = H) => LADOS.flatMap(([n, s]) => [
   poligono('B.' + n, [s * 23.8, 0, h - 30], hexagono(5.5), 4, 'zinc', { eje: [-s, 0, 0], huecos: [agujero(0, 0, 5)] }),
 ]);
 const guia = () => [
-  // Tubo rectangular hueco 44 ×36, con perforaciones hacia la canaleta (+Y).
   placa('guia.frente', [0, 16, 238], 44, 464, 2, 'metal', { eje: [0, 1, 0], huecos: [agujero(0, 238 - Z_C), agujero(0, 238 - 456)] }),
   placa('guia.atras', [0, -18, 6], 44, 2, 464),
   ...LADOS.map(([n, s]) => placa('guia.' + n, [s * 21, 0, 6], 2, 32, 464)),
-  // Puente inferior solidario al tubo: recibe los dos D, sin sumar otra pieza de inventario.
   placa('guia.anclaje', [0, 0, 6], 40, 32, 4, 'metal', { huecos: [agujero(-12, 0, 5), agujero(12, 0, 5)] }),
 ];
 const mariposa = () => [
@@ -62,15 +55,12 @@ const base = (conFelpas = false) => [
 ];
 const tornillosBase = () => [-12, 12].flatMap((x, i) => [
   cilindro('D.' + i + '.cana', [x, 0, 2], [0, 0, 1], 14, 2.5),
-  // Cabeza al ras; el cono fresado se simplifica dentro del espesor de la base.
   cilindro('D.' + i + '.cabeza', [x, 0, 1.85], [0, 0, 1], .2, 5),
   ...cruz('D.' + i, [x, 0, 1.8], [0, 0, -1]),
 ]);
 const felpas = () => APOYOS.map(([x, y], i) => cilindro('felpa.' + i, [x, y, 0], [0, 0, 1], .8, 12, 'fieltro'));
 const superior = (h = H) => [...tapa(h), ...corredera(h), ...fijacionTapa(h)];
 const mesa = (h = H, conFelpas = false) => [...superior(h), ...guia(), ...mariposa(), ...base(conFelpas), ...tornillosBase(), ...(conFelpas ? felpas() : [])];
-// Giro rígido de 180° sobre Y. La cara superior queda apoyada en z=0.
-// rotacion compone el giro con eje: conserva también las caras perforadas.
 const bocaAbajo = ps => ps.map(p => ({ ...p, pos: [-p.pos[0], p.pos[1], H - p.pos[2]], rotacion: [0, 180, 0] }));
 const manta = { id: 'manta', tipo: 'manta', pos: [0, -70, 0], w: 620, d: 520, mat: 'carton' };
 const paso = (n, id, titulo, a, piezas, extra = {}) => ({
@@ -83,7 +73,6 @@ export default {
   id: 'ch38', version: 1,
   marca: { nombre: 'DEGË Muebles', logo: 'assets/logo-dege.png', whatsapp: '5493413349022', tienda: 'https://dege.com.ar/', instagram: 'https://instagram.com/dege.muebles', confeti: ['#B0552F', '#ffffff', '#e9e4d6'] },
   materiales: { metal: { color: '#B0552F' }, zinc: { color: '#c9ced3' }, negro: { color: '#242424' }, oscuro: { color: '#292725' }, fieltro: { color: '#383635' }, carton: { color: '#e8d3b2' } },
-  // La interfaz descuenta consumibles. La herramienta E y las 4 piezas se documentan aparte.
   inventario: [{ id: 'A', n: 2, label: 'A · Tornillos Phillips' }, { id: 'B', n: 2, label: 'B · Tuercas' }, { id: 'C', n: 1, label: 'C · Mariposa' }, { id: 'D', n: 2, label: 'D · Tornillos fresados Phillips' }],
   piezasInventario: [{ id: '1', n: 1, label: 'Chapa superior' }, { id: '2', n: 1, label: 'Corredera' }, { id: '3', n: 1, label: 'Guía' }, { id: '4', n: 1, label: 'Base' }],
   herramientas: [{ id: 'E', n: 1, label: 'Llave hexagonal', incluida: true }, { id: 'phillips', n: 1, label: 'Destornillador Phillips', incluida: false }],
@@ -103,9 +92,6 @@ export default {
     momCta: 'Empezar a armar', finTitulo: '¡Tu mesa <em>está lista</em>!', finCuerpo: 'Ya tenés tu mueble armado. La subís o la bajás hasta tu altura, sin herramientas.', finTip: 'Sostené la tapa al aflojar la mariposa y ajustala antes de soltarla. Guardá la llave hexagonal.',
     waTexto: '¡Hola DEGË! Estoy armando la Mesa de arrime regulable y tengo una duda.', pie: 'DEGË Muebles · De Rosario a todo el país.', rvEjemplos: ['Ya tengo mi mesa lista', 'Me sirvió ver cada unión', 'Re fácil regular la altura'],
   },
-  // La portada muestra 64 cm; el rango de 57–70 figura en los textos y el extra.
-  // 49 × 30 es la TAPA: esas cotas van a la altura de la tapa (no en el piso, donde la base mide 30 × 30).
-  // Tapa: x ±245, y −260…40, esquinas r24 → rectas hasta ±221 / −236…16. Desplazamientos paralelos al piso.
   cotas: { w: 49, d: 30, h: 64, unidad: 'cm', caja: [-245, 245, -260, 40, 0, H], lineas: [
     [[-245, -236, H], [245, -236, H], [0, -95, 0], 49],
     [[221, 40, H], [221, -260, H], [95, 0, 0], 30],
@@ -132,7 +118,6 @@ export default {
       usa: ['4 · Base ×1', 'D · Tornillos ×2', 'Destornillador Phillips (no incluido)'], hw: { D: 2 }, unir: ['guia'], resaltar: ['base', 'D'],
       mueven: [mover('base', 90), mover('D', 150, [0, 0, 1], .7)], vista: { yaw: -38, pitch: 48 },
     }),
-    // Extra entre los pasos 5 y 6 de fábrica para aprovechar la base boca arriba.
     paso(6, 'felpas', 'Pegá las felpitas', ['Si vinieron felpitas, sacales el protector y pegalas sobre los apoyos de la base.', 'La mesa sigue boca abajo: esa cara va contra el piso.', 'Son un regalo hasta agotar stock. Si no vinieron, seguí al próximo paso.'], [manta, ...bocaAbajo(mesa(H, true))], {
       grupo: 'Extra', usa: ['Felpitas de fieltro (si vinieron en la caja)'], resaltar: ['felpa'], mueven: APOYOS.map((_, i) => mover('felpa.' + i, 45, [0, 0, 1], i * .2)), vista: { yaw: -38, pitch: 52 },
     }),
@@ -142,8 +127,6 @@ export default {
     paso(8, 'altura', 'Regulá la altura', ['Sostené la tapa y aflojá un poco la mariposa.', 'La subís o la bajás hasta tu altura, sin herramientas.', 'Elegí entre 57 y 70 cm y ajustá la mariposa antes de soltar la tapa.'], mesa(MIN), {
       grupo: 'Extra', titular: 'De 57 a 70 cm, sin herramientas', cuenta: { fijo: 'Paso 8 de 8 · regulación continua' },
       usa: ['C · Mariposa · ajuste a mano'], resaltar: ['C'], sinFantasma: true, vista: { yaw: -35, pitch: 22 },
-      // Sólo suben tapa, corredera y sus A/B. La guía, la base y C quedan a la misma altura.
-      // C afloja 6 mm antes de subir y vuelve a ajustar al terminar de bajar.
       mueven: [
         mover(['tapa', 'corredera', 'A', 'B'], MAX - MIN, [0, 0, 1], 0, { trayecto: [[0, 0], [.3, 0], [.6, 30], [.8, 70], [.9, MAX - MIN], [.95, MAX - MIN], [.975, 85], [.988, 40], [.994, 0], [1, 0]] }),
         mover('C', MAX - MIN, [0, 1, 0], 0, { trayecto: [[0, 0], [.25, 6], [.994, 6], [1, 0]] }),

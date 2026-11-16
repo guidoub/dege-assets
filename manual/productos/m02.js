@@ -1,6 +1,4 @@
-// M02 · Mesa de arrime (en C: la base entra debajo del sillón). ESTIMADO: no hay manual de fábrica en el Drive. Sale de
-// la foto de portada y del plano de la ficha (tapa 45 × 30 cm, 66 cm de alto). Ver estudio/estimados-notas.md.
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=0c6ddde886';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=b1713398f9';
 
 const W = 450, D = 300, E = 15, H = 660, ZT = H - E, R = 11;
 const XS = [205, -205], YS = [-115, -55];                  // dos caños por lado, del lado de atrás
@@ -12,7 +10,6 @@ const base = () => [
 const canos = () => XS.flatMap((x, i) => YS.map((y, j) => cil(`cano.${i}${j}`, [x, y, 6], ZT - PLA - 6, R)));
 const planchuelas = () => XS.map((x, i) => caja('plancha.' + i, x - 18, x + 18, -140, 20, ZT - PLA, PLA));
 const tapa = () => caja('tapa', -W / 2, W / 2, -D / 2, D / 2, ZT, E, 'madera');
-// A: tornillos desde abajo de la base a cada caño · B: tornillos desde abajo de la planchuela a la tapa
 const tornA = () => XS.flatMap((x, i) => YS.flatMap((y, j) => [cil(`A.${i}${j}.cana`, [x, y, 0], 18, 3, 'zinc', { seg: 14 }), cil(`A.${i}${j}.cabeza`, [x, y, 0], 3, 7, 'negro', { eje: [0, 0, -1], seg: 24 })]));
 const tornB = () => XS.flatMap((x, i) => [-85, 5].flatMap((y, j) => [cil(`B.${i}${j}.cana`, [x, y, ZT - PLA], 14, 2.2, 'zinc', { seg: 12 }), cil(`B.${i}${j}.cabeza`, [x, y, ZT - PLA], 2.4, 5, 'zinc', { eje: [0, 0, -1], seg: 20 })]));
 const ids = (pre, partes = ['cana', 'cabeza']) => XS.flatMap((_, i) => [0, 1].flatMap((j) => partes.map((p) => `${pre}.${i}${j}.${p}`)));

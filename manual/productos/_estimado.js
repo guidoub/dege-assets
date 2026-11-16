@@ -1,7 +1,3 @@
-// Piezas y textos comunes de los manuales ESTIMADOS (productos sin manual de fábrica en el Drive).
-// Se arman con fotos + plano de la ficha y con el sistema de herrajes de la línea (regatón, espárrago, tornillo Allen,
-// llave), que es el de los manuales reales CH01/CH02/CH04/CH07/CH08/CH10/CH11. Todo lo que no sale de una foto o un
-// plano va "a confirmar" en estudio/<id>-notas.md. mm · Z arriba · adelante = +Y (con yaw negativo, +X queda a la izquierda).
 
 export const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 24, ...extra });
 export const caja = (id, x0, x1, y0, y1, z0, alto, mat = 'chapa') => ({ id, tipo: 'perfil', puntos: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], pos: [0, 0, z0], z0: 0, z1: alto, mat });
@@ -10,13 +6,11 @@ export const manta = (w = 900, d = 760, extra = {}) => ({ id: 'manta', tipo: 'ma
 export const mover = (p, recorrido = 120, dir = [0, 0, 1], demora = 0) => ({ nombre: [].concat(p).join('+'), p, recorrido, dir, demora });
 export const agujero = (x, y, d = 8.5) => ({ x, y, w: d, d, r: d / 2 });
 
-// barra entre dos puntos (para travesaños)
 export function barra(id, a, b, r, mat = 'chapa') {
   const v = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], L = Math.hypot(...v);
   return cil(id, a, L, r, mat, { eje: v.map((n) => n / L) });
 }
 
-// ── contornos ──
 export function circulo(r, cx = 0, cy = 0, n = 72) { return Array.from({ length: n }, (_, k) => { const a = 2 * Math.PI * k / n; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }); }
 export function estadio(w, d, n = 24) {   // óvalo de lados rectos (w a lo largo de X)
   const r = d / 2, a = w / 2 - r, pts = [];
@@ -35,7 +29,6 @@ export function dentroDe(pts, x, y) {      // punto dentro de un contorno (para 
   return c;
 }
 
-// ── herrajes de la línea ──
 export const REG = 12, R_CANO = 11;
 export const regaton = (id, [x, y], z = 0) => cil(id, [x, y, z], REG, 9.5, 'negro');
 export const esparrago = (id, [x, y], z) => cil(id, [x, y, z - 20], 44, 4, 'zinc', { seg: 14 });
@@ -45,7 +38,6 @@ export const allen = (id, [x, y], z) => [
   cil(`${id}.hex`, [x, y, z + 3], .2, 2.5, 'oscuro', { seg: 6, sinContorno: true, sinAristas: true }),
 ];
 export const idsAllen = (ids) => ids.flatMap((id) => [`${id}.cana`, `${id}.cabeza`, `${id}.hex`]);
-// tornillo horizontal (travesaños): cabeza afuera, caña hacia adentro
 export const lateral = (id, pos, dir) => [
   cil(`${id}.cana`, pos, 16, 2.5, 'zinc', { eje: dir.map((n) => -n), seg: 12 }),
   cil(`${id}.cabeza`, pos, 2.6, 5.5, 'negro', { eje: dir, seg: 20 }),
@@ -55,7 +47,6 @@ export const llave = (x, y) => [
   cil('llave.largo', [x, y, 3], 82, 3, 'zinc', { eje: [0, 1, 0], seg: 12 }),
 ];
 
-// bandeja de herrajes genérica: grupos [{ letra, n, tipo: 'allen'|'esparrago'|'regaton'|'tornillo'|'tarugo' }] + llave
 export function herrajes(grupos, conLlave = true) {
   const out = [manta(Math.max(520, 150 * grupos.length + 220), 320, { lineas: 0 })];
   const x0 = -((grupos.length - (conLlave ? 0 : 1)) * 150) / 2;
@@ -82,7 +73,6 @@ export function paso(NA, vistaBase) {
   });
 }
 
-// textos comunes; cfg: { nombre, codigo, cabecera, sust, art ('el'|'la'), ladoCuerpo, datos, momTitulo, momCuerpo, tips, finCuerpo, finTip, tienda }
 export function textos(cfg) {
   const A = cfg.art === 'la' ? 'a' : 'o';
   return {

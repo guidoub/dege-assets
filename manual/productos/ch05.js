@@ -1,7 +1,4 @@
-// CH05 · Estantería flotante (va en la pared). ESTIMADO: no hay manual de fábrica en el Drive. Sale de la foto de portada
-// y del plano de la ficha (80 × 80 cm, estantes de 16,5 cm de fondo, 3 estantes y 2 rieles ranurados).
-// Ver estudio/estimados-notas.md. mm · Z arriba · la pared queda en y = 0 y los estantes salen hacia +Y.
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=0c6ddde886';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja } from './_estimado.js?v=b1713398f9';
 
 const W = 800, H = 800, D = 165, T = 2, XR = 180, RW = 40;   // rieles a ±18 cm del centro, de 4 cm de ancho
 const ZS = [110, 400, 690];                                    // altura de los 3 estantes (se pueden cambiar de ranura)
@@ -14,7 +11,6 @@ const ranuras = (x) => Array.from({ length: 13 }, (_, i) => ({ x, y: 115 + i * 4
 const riel = (s) => ({ id: 'riel.' + (s > 0 ? 'i' : 'd'), tipo: 'perfil', puntos: rr(s * XR - RW / 2, s * XR + RW / 2, 0, H, 4), pos: [0, T, 0], z0: 0, z1: T, mat: 'chapa', rotacion: XZ,
   huecos: [...ranuras(s * XR), ...FIJ.filter(([x]) => Math.sign(x) === s).map(([x, z]) => ({ x, y: z, w: 6, d: 6, r: 3 }))] });
 const rieles = () => [riel(1), riel(-1)];
-// estante: chapa de 16,5 cm con un borde chico adelante y la pestaña de atrás que se engancha en las ranuras
 const estante = (i, z, dy = 0) => [
   caja(`est${i}.piso`, -W / 2, W / 2, T * 2 + dy, T * 2 + D + dy, z, T),
   { id: `est${i}.frente`, tipo: 'perfil', puntos: rr(-W / 2, W / 2, 0, 18, 2), pos: [0, T * 2 + D + dy, z], z0: 0, z1: T, mat: 'chapa', rotacion: XZ },

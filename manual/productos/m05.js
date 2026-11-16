@@ -1,7 +1,4 @@
-// M05 · Perchero industrial con banco (melamina y caño). ESTIMADO: no hay manual de fábrica en el Drive ni plano. Sale de la
-// foto de portada y de la ficha técnica de la descripción (68 × 30 × 167 cm): banco de 2 niveles y un poste atrás a la
-// izquierda con ganchos. Proporciones medidas sobre la foto. Ver estudio/estimados-notas.md.
-import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=0c6ddde886';
+import { manta, mover, herrajes, paso as P_, textos, marca, MATS, cil, caja, regaton, esparrago, allen, idsAllen, REG, R_CANO } from './_estimado.js?v=b1713398f9';
 
 const W = 680, D = 300, E = 15, H = 1670;
 const P = { fi: [315, 125], fd: [-315, 125], ti: [315, -125], td: [-315, -125] }, K = Object.keys(P);
@@ -14,7 +11,6 @@ const esp1 = () => K.map((k) => esparrago('esp1.' + k, P[k], Z1));
 const canos = () => K.map((k) => cil('cano.' + k, [...P[k], Z1 + E], Z2 - Z1 - E, R_CANO));
 const espPoste = (id, z) => esparrago(id, P[POSTE], z);
 const [PX, PY] = P[POSTE];
-// gancho simple (en la unión del poste, hacia la derecha) y gancho doble (remate de arriba, a los dos lados)
 const ganchoSimple = () => [caja('gancho1.base', PX - 70, PX, PY - 9, PY + 9, ZJ, 2.5), caja('gancho1.punta', PX - 73, PX - 70, PY - 8, PY + 8, ZJ, 24)];
 const ganchoDoble = () => [caja('gancho2.base', PX - 70, PX + 70, PY - 9, PY + 9, ZTOP, 2.5),
   caja('gancho2.punta.i', PX + 70, PX + 73, PY - 8, PY + 8, ZTOP, 24), caja('gancho2.punta.d', PX - 73, PX - 70, PY - 8, PY + 8, ZTOP, 24)];

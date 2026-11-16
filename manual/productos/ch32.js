@@ -1,10 +1,3 @@
-// CH32 · Cubo modular.
-// Fuentes: "Manual_de_Armado_CH32.V2.pdf" (Drive › Código CH32, 8 p.), ficha de la web (34 × 34 × 31 cm) y fotos de la
-// ficha (portada en torre, cubo negro suelto y despiece). mm · Z arriba · piso z = 0 · adelante = +Y. Ver estudio/ch32-notas.md.
-//
-// Estructura: 4 caras de 10 caños (arriba, abajo y los 2 costados; adelante y atrás quedan abiertos). Las 4 esquinas son
-// ángulos en L con forma de peine: los caños del techo/piso y los de los costados se INTERCALAN en la esquina (medio paso
-// corridos), y cada caño lleva un tornillo A en cada punta, que entra por la esquina al tope del caño: 40 × 2 = 80.
 
 const E = 170;              // media medida exterior en X (34 cm)
 const ALTO = 340;           // 34 cm
@@ -20,26 +13,20 @@ const zN = (sz, z) => (sz > 0 ? z : ALTO - z); // espeja alturas para la esquina
 
 const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 16, ...extra });
 
-// ── caños ──
 const L_CANO = 2 * (E - T);                       // 33,6 cm
 const Z_TECHO = ALTO - T - R, Z_PISO = T + R;     // centros de los caños de techo y piso
 const X_COST = E - T - R;                         // centro de los caños de los costados
 const canosH = (nivel, sz) => YA.map((y, k) => cil(`c.${nivel}.${k}`, [-(E - T), y, sz > 0 ? Z_TECHO : Z_PISO], L_CANO, R, 'chapa', { eje: [1, 0, 0] }));
 const canosV = (lado, sx) => YB.map((y, k) => cil(`c.${lado}.${k}`, [sx * X_COST, y, T], ALTO - 2 * T, R));
 
-// ── esquina en L con dientes intercalados ──
-// Ala vertical (plano YZ): lomo + 10 dientes donde atornillan los caños del techo/piso.
-// Ala horizontal (plano XY): lomo + 10 dientes donde atornillan los caños del costado.
 function esquina(nivel, sz, lado, sx) {
   const id = `e.${nivel}.${lado}`, d = 7;
   const zTop = ALTO, zDiente = ALTO - T - 2 * R - 3; // los dientes verticales cubren la punta del caño
-  // Ala vertical: puntos [y, z] (z de la esquina de arriba; se espeja para la de abajo).
   const v = [[-PROF / 2, zTop - 4]];
   for (const y of YA) v.push([y - d, zTop - 4], [y - d, zDiente], [y + d, zDiente], [y + d, zTop - 4]);
   v.push([PROF / 2, zTop - 4], [PROF / 2, zTop], [-PROF / 2, zTop]);
   const vz = v.map(([y, z]) => [y, zN(sz, z)]);
   const xV = sx > 0 ? E - T : -E;
-  // Ala horizontal: puntos [x, y] relativos al borde exterior (x crece hacia adentro).
   const xDiente = T + 2 * R + 3;
   const h = [[0, -PROF / 2]];
   for (const y of YB) h.push([4, y - d], [xDiente, y - d], [xDiente, y + d], [4, y + d]);
@@ -52,17 +39,13 @@ function esquina(nivel, sz, lado, sx) {
   ];
 }
 
-// ── tornillos A (cabeza Phillips; la caña entra al tope del caño) ──
 const tornillo = (id, pos, haciaAfuera) => [
   cil(id + '.cabeza', pos, 3, 4.8, 'zinc', { eje: haciaAfuera, seg: 14 }),
   cil(id + '.cana', pos, 14, 2, 'zinc', { eje: haciaAfuera.map((n) => -n), seg: 8, sinContorno: true, sinAristas: true }),
 ];
-// En las puntas de los caños del techo/piso (entran en X por el ala vertical).
 const tornillosH = (nivel, sz, lado, sx) => YA.map((y, k) => tornillo(`A.${nivel}.${lado}.${k}`, [sx * E, y, sz > 0 ? Z_TECHO : Z_PISO], [sx, 0, 0])).flat();
-// En las puntas de los caños de los costados (entran en Z por el ala horizontal).
 const tornillosV = (lado, sx, nivel, sz) => YB.map((y, k) => tornillo(`A.${lado}.${nivel}.${k}`, [sx * X_COST, y, sz > 0 ? ALTO : 0], [0, 0, sz])).flat();
 
-// ── conjuntos por paso ──
 const paso1 = () => [...canosH('arriba', 1), ...esquina('arriba', 1, 'izq', 1), ...tornillosH('arriba', 1, 'izq', 1)];
 const paso2 = () => [...paso1(), ...canosV('izq', 1), ...tornillosV('izq', 1, 'arriba', 1)];
 const paso3 = () => [...paso2(), ...esquina('arriba', 1, 'der', -1), ...tornillosH('arriba', 1, 'der', -1), ...canosV('der', -1), ...tornillosV('der', -1, 'arriba', 1)];
@@ -71,10 +54,8 @@ const cubo = () => [...paso4(), ...canosH('abajo', -1), ...LADOS.flatMap(([l, sx
 
 const manta = (w = 760, d = 640, extra = {}) => ({ id: 'manta', tipo: 'manta', w, d, r: 22, mat: 'carton', ...extra });
 
-// ── «Ordená las piezas» ──
 function ordenPiezas() {
   const grupo = (g, y0) => Array.from({ length: 10 }, (_, k) => cil(`pz.1.${g}.${k}`, [-L_CANO / 2 - 110, y0 + k * 15, R], L_CANO, R, 'chapa', { eje: [1, 0, 0] }));
-  // Esquinas acostadas sobre la manta, de canto (su ala vertical queda horizontal).
   const esq = (k) => esquina('arriba', 1, 'izq', 1).map((p) => ({
     ...p, id: p.id.replace('e.arriba.izq', 'pz.2.' + k),
     pos: [p.pos[0] - E + 330 + k * 42, p.pos[1] - 110, p.pos[2] - ALTO + 17],
@@ -89,7 +70,6 @@ function ordenPiezas() {
     { id: 'rotulo.A', tipo: 'texto', txt: 'A · TORNILLOS ×80', pos: [390, 360, .3], alto: 36 },
   ];
 }
-// ── «Contá los tornillos» ──
 const herrajesPiezas = () => [
   manta(520, 340, { lineas: 0 }),
   ...Array.from({ length: 20 }, (_, i) => tornillo(`h.A.${i}`, [-150 + (i % 10) * 34, -40 + Math.floor(i / 10) * 60, 14], [0, 0, 1])).flat(),

@@ -1,12 +1,12 @@
 // Manual de armado DEGË · interfaz
 // Carga el producto (?p=mesa-ratona por defecto), arma las escenas con el motor 3D y maneja todo el recorrido:
 // portada → «Antes de arrancar» → pasos (con dos tiempos cuando hay herrajes) → cierre → reseña.
-import { Motor } from "./motor3d.js?v=0c6ddde886";
-import { IC, GRUPO_IC } from "./iconos.js?v=0c6ddde886";
+import { Motor } from "./motor3d.js?v=b1713398f9";
+import { IC, GRUPO_IC } from "./iconos.js?v=b1713398f9";
 
 const qs = new URLSearchParams(location.search);
 const ID = (qs.get("p") || "ch29").replace(/[^a-z0-9-]/g, "");
-const P = (await import(`../productos/${ID}.js?v=0c6ddde886`)).default;
+const P = (await import(`../productos/${ID}.js?v=b1713398f9`)).default;
 const T = P.textos, S = P.escenas, N = S.length, LAST = N - 1, STEPS = N - 2;
 const KEY = "dege:manual:" + P.id;
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -267,6 +267,56 @@ function paint(dt) {
   if (motor._w !== R.width || motor._h !== R.height) { motor.tamano(R.width, R.height); motor._w = R.width; motor._h = R.height; }
   motor.dibujar(view);
   cotasPaint(R);
+  rotulosPaint(R);
+}
+// ── nombres de las piezas: etiquetas de tamaño fijo en pantalla, siempre legibles ──
+// Si en una escena se pisan, pasan a mostrar solo el número («5»), como el manual de papel; el nombre completo
+// queda en la lista de piezas de abajo. Lo que siga encimado se corre un poco hacia arriba o hacia abajo.
+const rotEl = document.createElement("div"), rotPool = new Map(), rotMide = document.createElement("canvas").getContext("2d");
+rotEl.className = "rotulos";
+rotEl.setAttribute("aria-hidden", "true");
+stageEl.appendChild(rotEl);
+let rotCorto = { escena: -1, ancho: 0, on: false };
+const rotTexto = (txt, corto) => (corto && txt.includes(" · ") ? txt.split(" · ")[0] : txt);
+function rotCaja(txt) {
+  rotMide.font = (txt.length <= 2 ? 13 : 11.5) + "px 'DM Sans', Arial, sans-serif";
+  rotMide.font = "800 " + rotMide.font;
+  const w = rotMide.measureText(txt).width + txt.length * 0.4 + (txt.length <= 2 ? 14 : 16);
+  return [Math.max(txt.length <= 2 ? 24 : 0, w), txt.length <= 2 ? 23 : 21.5];
+}
+function rotAcomodar(items, corto, R) {
+  const puestos = [];
+  let choques = 0;
+  for (const it of items) {
+    const [w, h] = rotCaja(rotTexto(it.r.txt, corto));
+    let x = Math.min(Math.max(it.x, w / 2 + 4), R.width - w / 2 - 4), y = it.y, ok = false;
+    for (const d of [0, -1, 1, -2, 2]) {
+      const yy = it.y + d * (h + 3);
+      if (!puestos.some((b) => Math.abs(b.x - x) < (b.w + w) / 2 + 3 && Math.abs(b.y - yy) < (b.h + h) / 2 + 2)) { y = yy; ok = true; break; }
+    }
+    if (!ok) choques++;
+    if (it.r.op > 0.05) puestos.push({ x, y, w, h });
+    it.px = x; it.py = y;
+  }
+  return choques;
+}
+function rotulosPaint(R) {
+  const k = view.w / R.width, vistos = new Set();
+  const items = motor.rotulos(cur).map((r) => ({ r, x: (r.x - (view.cx - view.w / 2)) / k, y: (view.cy + view.h / 2 - r.y) / k }));
+  if (rotCorto.escena !== cur || Math.abs(rotCorto.ancho - R.width) > 40) rotCorto = { escena: cur, ancho: R.width, on: false };
+  // una vez que una escena pasa a números, se queda así (evita que titile mientras la cámara se acomoda)
+  if (!rotCorto.on && rotAcomodar(items, false, R) > 0) rotCorto.on = true;
+  if (rotCorto.on) rotAcomodar(items, true, R);
+  for (const it of items) {
+    const r = it.r, txt = rotTexto(r.txt, rotCorto.on);
+    let el = rotPool.get(r.id);
+    if (!el) { el = document.createElement("span"); rotEl.appendChild(el); rotPool.set(r.id, el); }
+    if (el.textContent !== txt) { el.textContent = txt; el.classList.toggle("letra", txt.length <= 2); }
+    el.style.transform = "translate(" + it.px.toFixed(1) + "px," + it.py.toFixed(1) + "px) translate(-50%,-50%)";
+    el.style.opacity = String(r.op < 0.6 ? r.op * 0.6 : r.op);
+    vistos.add(r.id);
+  }
+  for (const [id, el] of rotPool) if (!vistos.has(id)) el.style.opacity = "0";
 }
 function tick(now) {
   const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
@@ -327,8 +377,13 @@ function renderHw() {
   hwBtn.setAttribute("aria-label", "Quedan " + left + " herrajes. Ver los herrajes que quedan");
   const usa = using.length > 0 && cur > 0 && cur < LAST;
   hwBtn.classList.toggle("use", usa);
-  hwChip.innerHTML = usa ? IC.screw.replace("<svg", '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex:0 0 15px"') + "<span>" + using.map((h) => { const [c, n = ""] = h.label.split(" · "); return esc(c + (n ? " · " + n.split(" ")[0] : "")) + " ×" + h.now; }).join(" · ") + "</span>" : "";
+  // varios herrajes en el mismo paso: se separan con «+»; si no entran en la píldora, quedan solo la letra y la cantidad
+  // (los nombres completos siguen en las fichas de abajo)
+  const chipTxt = (corto) => using.map((h) => { const [c, n = ""] = h.label.split(" · "); return esc(corto || !n ? c : c + " · " + n.split(" ")[0]) + " ×" + h.now; }).join(" + ");
+  const chipIc = IC.screw.replace("<svg", '<svg style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex:0 0 15px"');
+  hwChip.innerHTML = usa ? chipIc + "<span>" + chipTxt(false) + "</span>" : "";
   hwChip.classList.toggle("on", usa);
+  if (usa && using.length > 1 && hwChip.scrollWidth > hwChip.clientWidth + 1) hwChip.innerHTML = chipIc + "<span>" + chipTxt(true) + "</span>";
   stgEl.classList.toggle("mini", usa);
   hwPanel.innerHTML = "<h4>Herrajes</h4>" + st.map((h) => {
     const cls = h.now ? "now" : !h.left ? "done" : "";

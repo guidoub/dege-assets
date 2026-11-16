@@ -1,13 +1,3 @@
-// Generador común de las variantes del Sistema CUMO (cubo, estanterías y rack).
-// Fuentes: "Manual de Armado - SISTEMA CUMO.pdf" (8 p.), "Sistema Cumo - Manual de Armado General.pdf", "Sistema Cumo
-// variantes.pdf" y las fichas técnicas por variante (Drive › Fichas Técnicas). Ver estudio/cumo-notas.md.
-// mm · Z arriba · piso z = 0 · adelante = +Y (con la cámara de frente, +X queda a la izquierda).
-//
-// Medidas que cierran con todas las fichas: placa cuadrada de 346 mm y 15 mm de espesor; el conector asoma 5,5 mm.
-//   1 cubo: 346 + 2·15 + 2·5,5 = 387 (38,7 ✓) · 2 cubos con placa compartida: 2·346 + 3·15 + 11 = 748 (74,8 ✓)
-//   3 cubos: 3·346 + 4·15 + 11 = 1109 (111 ✓)
-// Cada cubo lleva 8 conectores (4 esquinas × adelante y atrás). Donde se juntan 3 o 4 placas van 2 o 3 conectores
-// (uno de cada cubo), como en los pasos 5 y 6 del manual.
 
 const S = 346, T = 15, C = 5.5, P = S + T, H = T / 2;
 const LAP = 24, A = 30, W = 5, PUENTE = 4, PROF = 26, MARGEN = 6;
@@ -18,7 +8,6 @@ const ORDM = ['Primer', 'Segundo', 'Tercer', 'Cuarto'];
 
 const rect = (a, b, c, d) => [Math.min(a, b), Math.max(a, b), Math.min(c, d), Math.max(c, d)];
 
-// Contorno de la unión de rectángulos [x0, x1, z0, z1] (sin agujeros): grilla con las coordenadas únicas y borde orientado.
 function unir(rects) {
   const xs = [...new Set(rects.flatMap((r) => [r[0], r[1]]))].sort((a, b) => a - b);
   const zs = [...new Set(rects.flatMap((r) => [r[2], r[3]]))].sort((a, b) => a - b);
@@ -49,7 +38,6 @@ function unir(rects) {
   });
 }
 
-// brazos del conector por dentro del cubo (q apunta hacia adentro del cubo) + puente que los une con la esquina
 const brazos = (J, q) => {
   const ci = [J[0] + q[0] * H, J[1] + q[1] * H];
   return [
@@ -58,7 +46,6 @@ const brazos = (J, q) => {
     rect(ci[0] - PUENTE, ci[0] + PUENTE, ci[1] - PUENTE, ci[1] + PUENTE),
   ];
 };
-// esquina del conector: llena el hueco entre las puntas de las placas y las abraza por fuera donde no hay otro cubo
 const esquina = (J, brazo, exterior) => {
   const rs = [[J[0] - H - (brazo.L ? 0 : C), J[0] + H + (brazo.R ? 0 : C), J[1] - H - (brazo.D ? 0 : C), J[1] + H + (brazo.U ? 0 : C)]];
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
@@ -70,7 +57,6 @@ const esquina = (J, brazo, exterior) => {
   }
   return rs;
 };
-// un conector suelto (esquina de un cubo solo), para el orden de piezas y los herrajes
 const FORMA_SUELTA = unir([...brazos([0, 0], [1, 1]), ...esquina([0, 0], { R: true, U: true, L: false, D: false }, (sx, sz) => !(sx > 0 && sz > 0))]);
 
 const cil = (id, pos, largo, r, mat = 'zinc', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 18, ...extra });
@@ -106,7 +92,6 @@ export function cumo(cfg) {
       pos: [0, frente ? YF : YT, 0], z0: 0, z1: PROF, mat: 'conector', rotacion: [90, 0, 0] };
   };
 
-  // ── secuencia de armado: cada cubo en dos partes (abajo: base y costados · arriba: la placa de encima) ──
   const puestas = new Set(), esquinas = new Set(), partes = [];
   let piezas = [];
   celdas.forEach(([i, j], n) => {
@@ -133,7 +118,6 @@ export function cumo(cfg) {
   const nEncima = partes.filter((p) => p.encima).length;
   let kEncima = 0;
 
-  // ── textos de cada parte ──
   const VETAS = 'En madera kiri o atakama, alineá las vetas entre las placas: queda mejor.';
   const AJUSTE_B = ['Girá el tornillo de cada conector como el reloj hasta que las placas queden sujetas.', 'Sin forzar: alcanza con que no se muevan.'];
   const textos = (p, ultima) => {
@@ -186,7 +170,6 @@ export function cumo(cfg) {
     };
   };
 
-  // ── antes de empezar ──
   const pilas = Math.ceil(NP / 5), porPila = Array.from({ length: pilas }, (_, k) => Math.floor(NP / pilas) + (k < NP % pilas ? 1 : 0));
   const ordenPiezas = () => {
     const out = [manta(pilas * (S + 70) + 340, S + 260, { pos: [-90, 0, 0] })];
@@ -212,7 +195,6 @@ export function cumo(cfg) {
       { id: 'rotulo.A', tipo: 'texto', txt: 'A', pos: [-265, 30 + 36 * Math.ceil(NC / cols), .3], alto: 30 });
     return out;
   };
-  // paso 1 del manual: aflojar los conectores
   const PZ = H + C, XS = [90, 30, -30, -90];
   const aflojarPiezas = () => [manta(560, 300, { lineas: 0 }),
     ...XS.map((x, k) => ({ id: 'h.c.' + k, tipo: 'perfil', puntos: FORMA_SUELTA, pos: [x - 10, 13, PZ], z0: 0, z1: PROF, mat: 'conector', rotacion: [90, 0, 0] }))];

@@ -1,7 +1,3 @@
-// CH01 · Mesita auxiliar Matera.
-// Fuentes: "Manual de armado Mesa Matera CH01.pdf" (Drive › Manuales de armado, 4 p.), ficha de medidas de la web
-// (Ø36 cm, 52 cm de alto con la manija, manija de 9 cm) y fotos de la ficha. mm · Z arriba · piso z = 0 · adelante = +Y.
-// Ver estudio/ch01-notas.md.
 
 const R = 180;              // chapa Ø36
 const RP = 170;             // centro de cada pata: sobre la oreja del borde
@@ -10,14 +6,11 @@ const CHAPA = 2.5, PATA_PL = 12, L_PATA = 415, L_MANIJA = 90;
 const Z_CHAPA = PATA_PL + L_PATA;                   // 427: chapa apoyada sobre los caños
 const Z_MANIJA = Z_CHAPA + CHAPA;                   // la manija arranca arriba de la chapa
 const ALTO = Z_MANIJA + L_MANIJA + 3;               // ≈ 52 cm con la tapita
-// Patas a 120°: la de la manija atrás (apenas a la derecha, como en la ficha de medidas) y las otras dos adelante.
-// Con la cámara de frente, +X queda a la izquierda.
 const ANG = { M: 280, A: 160, B: 40 };
 const P = Object.fromEntries(Object.entries(ANG).map(([k, a]) => [k, [RP * Math.cos(a * Math.PI / 180), RP * Math.sin(a * Math.PI / 180)]]));
 
 const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 28, ...extra });
 
-// Chapa redonda con tres orejas chicas (donde van los agujeros), como en el dibujo del manual.
 function contorno() {
   const pts = [], RE = 16, n = 300, angs = Object.values(ANG).map((a) => a * Math.PI / 180);
   for (let k = 0; k < n; k++) {
@@ -41,7 +34,6 @@ const manija = () => [
   cil('manija.aro', [...P.M, Z_MANIJA], 2.5, R_CANO + .7, 'negro'),
   cil('manija.tapa', [...P.M, Z_MANIJA + L_MANIJA], 3, R_CANO - .3, 'negro'),
 ];
-// Tornillo Allen de cabeza plana y ancha (como el del manual), desde arriba de la chapa al caño.
 const tornillo = (k) => [
   cil(`T.${k}.cana`, [...P[k], Z_MANIJA], 22, 3, 'zinc', { eje: [0, 0, -1], seg: 14 }),
   cil(`T.${k}.cabeza`, [...P[k], Z_MANIJA], 3, 7, 'negro', { seg: 24 }),
@@ -51,16 +43,15 @@ const mesa = () => [...['M', 'A', 'B'].flatMap(pata), ...esparrago(), ...chapa()
 
 const manta = (w = 820, d = 760, extra = {}) => ({ id: 'manta', tipo: 'manta', w, d, r: 22, mat: 'carton', ...extra });
 
-// ── «Ordená las piezas» ──
 const acostado = (id, x, y, largo, r = R_CANO) => cil(id, [x, y, r], largo, r, 'chapa', { eje: [1, 0, 0] });
 const ordenPiezas = () => [
   manta(1100, 760, { pos: [40, -20, 0] }),
   { id: 'pz.3', tipo: 'perfil', puntos: contorno(), pos: [-270, 30, 0], z0: 0, z1: CHAPA, mat: 'chapa' },
-  { id: 'rotulo.3', tipo: 'texto', txt: '3 · CHAPA', pos: [-270, 270, .3], alto: 36 },
+  { id: 'rotulo.3', tipo: 'texto', txt: '2 · CHAPA', pos: [-270, 270, .3], alto: 36 },
   ...[0, 1, 2].map((k) => acostado('pz.5.' + k, 0, -150 + k * 60, L_PATA)),
-  { id: 'rotulo.5', tipo: 'texto', txt: '5 · CAÑOS 41,5 ×3', pos: [210, -230, .3], alto: 32 },
+  { id: 'rotulo.5', tipo: 'texto', txt: '3 · CAÑOS LARGOS ×3', pos: [210, -230, .3], alto: 32 },
   acostado('pz.1', 0, 110, L_MANIJA),
-  { id: 'rotulo.1', tipo: 'texto', txt: '1 · CAÑO 9', pos: [45, 175, .3], alto: 32 },
+  { id: 'rotulo.1', tipo: 'texto', txt: '1 · CAÑO CORTO', pos: [45, 175, .3], alto: 32 },
   { id: 'bolsa', tipo: 'perfil', forma: 'redondeada', w: 170, d: 110, r: 22, pos: [330, 130, 0], z0: 0, z1: 20, mat: 'bolsa' },
   { id: 'rotulo.h', tipo: 'texto', txt: 'HERRAJES', pos: [330, 220, .3], alto: 28 },
 ];
@@ -71,21 +62,21 @@ const herrajesPiezas = () => [
   ...[0, 1, 2].map((i) => cil('h.pata.' + i, [110 + (i % 2) * 40, -50 + Math.floor(i / 2) * 50 + (i === 2 ? 10 : 0), 0], PATA_PL, 9.5, 'negro')),
   cil('llave.corto', [190, -40, 3], 26, 3, 'zinc', { eje: [-1, 0, 0], seg: 12 }),
   cil('llave.largo', [190, -40, 3], 82, 3, 'zinc', { eje: [0, 1, 0], seg: 12 }),
-  { id: 'rotulo.2', tipo: 'texto', txt: '2', pos: [-150, 100, .3], alto: 30 },
-  { id: 'rotulo.4', tipo: 'texto', txt: '4', pos: [-10, 100, .3], alto: 30 },
-  { id: 'rotulo.6', tipo: 'texto', txt: '6', pos: [125, 100, .3], alto: 30 },
-  { id: 'rotulo.7', tipo: 'texto', txt: '7', pos: [195, 100, .3], alto: 30 },
+  { id: 'rotulo.2', tipo: 'texto', txt: 'B', pos: [-150, 100, .3], alto: 30 },
+  { id: 'rotulo.4', tipo: 'texto', txt: 'A', pos: [-10, 100, .3], alto: 30 },
+  { id: 'rotulo.6', tipo: 'texto', txt: 'C', pos: [125, 100, .3], alto: 30 },
+  { id: 'rotulo.7', tipo: 'texto', txt: 'D', pos: [195, 100, .3], alto: 30 },
 ];
 
 const mover = (p, recorrido = 120, dir = [0, 0, 1], demora = 0) => ({ nombre: [].concat(p).join('+'), p, recorrido, dir, demora });
 const paso = (num, id, titulo, a, piezas, extra = {}) => ({
   num, id, grupo: 'Armado', titulo: `${num}. ${titulo}`, titular: titulo,
-  subs: { a, b: [], tip: '' }, usa: [], cuenta: { fijo: `Paso ${num} de 3` },
+  subs: { a, b: [], tip: '' }, usa: [], cuenta: { fijo: `Paso ${num} de 5` },
   vista: { yaw: -24, pitch: 22 }, piezas, mueven: [], resaltar: [], encuadrarTodo: false, ...extra,
 });
 
 export default {
-  id: 'ch01', version: 1, pasosManual: 3,
+  id: 'ch01', version: 1, pasosManual: 5,
   marca: {
     nombre: 'DEGË Muebles', logo: 'assets/logo-dege.png', whatsapp: '5493413349022',
     tienda: 'https://dege.com.ar/productos/mesita-auxiliar-matera/', instagram: 'https://instagram.com/dege.muebles',
@@ -95,21 +86,21 @@ export default {
     chapa: { color: '#C4643E' }, zinc: { color: '#c9ced3' }, negro: { color: '#242424' }, oscuro: { color: '#111111' },
     carton: { color: '#e8d3b2' }, bolsa: { color: '#eef5f6', opacidad: .92 },
   },
-  inventario: [{ id: '6', n: 3, label: '6 · Patas plásticas' }, { id: '2', n: 1, label: '2 · Espárrago' }, { id: '4', n: 2, label: '4 · Tornillos Allen' }],
+  inventario: [{ id: 'C', n: 3, label: 'C · Regatones' }, { id: 'B', n: 1, label: 'B · Espárrago' }, { id: 'A', n: 2, label: 'A · Tornillos Allen' }],
   textos: {
     titulo: 'Armá tu Mesita Matera CH01 · DEGË Muebles', cabecera: 'Mesita Matera CH01',
     ladoTitulo: 'Tu mesita Matera, <em>paso a paso</em>',
-    ladoCuerpo: 'Una chapa redonda, tres patas y la manija para llevarla con una mano. Seguí los 3 pasos del manual de fábrica y girá el modelo para ver cada unión.',
+    ladoCuerpo: 'Una chapa redonda, tres patas y la manija para llevarla con una mano. Seguí los 5 pasos del manual de fábrica y girá el modelo para ver cada unión.',
     ladoNota: 'Abrilo desde el celu y tenelo al lado mientras armás.',
     teclaSig: 'Siguiente paso', teclaAnt: 'Paso anterior', teclaGirar: 'Arrastrá la mesita para girarla', girar: 'Arrastrá para girar la mesita',
     portadaKicker: 'Manual de armado', portadaTitulo: 'Armá tu <em>mesita Matera</em>, paso a paso',
-    datos: [['layers', '5 piezas', '+ 6 herrajes'], ['steps', '3 pasos', 'llave Allen incluida'], ['box', 'Ø36 × 52', 'cm · diámetro y alto']],
+    datos: [['layers', '5 piezas', '+ 6 herrajes'], ['steps', '5 pasos', 'llave Allen incluida'], ['box', 'Ø36 × 52', 'cm · diámetro y alto']],
     retomarA: '¿Ya habías empezado?', retomarB: 'Seguí en el paso',
     momKicker: 'Antes de arrancar', momTitulo: 'Tu Matera,<br><em>en 5 minutos</em>', momCuerpo: 'Tres patas, una chapa y la manija. La llave Allen viene en la caja.',
     momTips: [
       ['space', 'Hacé lugar', 'Una manta o el cartón de la caja en el piso'],
       ['kids', 'Separá los caños', '3 largos de 41,5 cm y 1 corto de 9 cm'],
-      ['time', 'Sin apuro', '3 pasos y listo'],
+      ['time', 'Sin apuro', '5 pasos, como en el manual de papel'],
       ['music', 'Y poné música', 'La que te acompañe mientras armás'],
     ],
     momCta: 'Empezar a armar',
@@ -129,7 +120,7 @@ export default {
     {
       id: 'orden', grupo: 'Antes de empezar', titulo: 'Ordená las piezas', titular: 'Revisá que estén todas',
       subs: { a: ['Sacá todo de la caja: la chapa, 3 caños largos y 1 corto.', 'El número es el que vas a ver en cada paso.'], b: [], tip: 'Observá bien cada pieza antes de encastrarla. Cualquier duda, escribinos.' },
-      usa: ['3 · Chapa', '5 · Caños 41,5 cm ×3', '1 · Caño 9 cm'],
+      usa: ['2 · Chapa', '3 · Caños largos ×3', '1 · Caño corto'],
       elegir: [
         { m: ['pz.3'], t: 'Es el disco de 36 cm con tres agujeros en el borde.' },
         { m: ['pz.5'], t: 'Son las 3 patas de 41,5 cm.' },
@@ -140,43 +131,53 @@ export default {
     },
     {
       id: 'herrajes', grupo: 'Antes de empezar', titulo: 'Contá los herrajes', titular: 'Contá antes de armar',
-      subs: { a: ['Son 1 espárrago, 2 tornillos Allen, 3 patas plásticas y la llave.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: 'El espárrago es la varilla roscada sin cabeza: une una pata con la manija, a través de la chapa.' },
-      usa: ['7 · Llave Allen incluida'], check: [[1, '2 · Espárrago'], [2, '4 · Tornillos Allen'], [3, '6 · Patas plásticas'], [1, '7 · Llave Allen']],
+      subs: { a: ['Son 1 espárrago, 2 tornillos Allen, 3 regatones y la llave.', 'Tocá cada grupo a medida que lo contás.'], b: [], tip: 'El espárrago es la varilla roscada sin cabeza: une una pata con la manija, a través de la chapa. El listado de papel dice "Caño largo ×1": son 3.' },
+      usa: ['D · Llave Allen incluida'], check: [[1, 'B · Espárrago'], [2, 'A · Tornillos Allen'], [3, 'C · Regatones'], [1, 'D · Llave Allen']],
       cuenta: { fijo: '6 herrajes · 1 llave' }, encuadrarTodo: true, vista: { yaw: -6, pitch: 58 },
       piezas: herrajesPiezas(), resaltar: ['llave'], mueven: [mover('llave', 110)],
     },
-    paso(1, 'manija', 'Primera pata y manija', [
-      'Enroscá una pata plástica en un extremo de cada caño de 41,5 cm.',
-      'En uno de esos caños, enroscá el espárrago del otro lado.',
-      'Pasalo por un agujero de la chapa y, por arriba, enroscá el caño de 9 cm.',
+    paso(1, 'regaton', 'Regatón y espárrago', [
+      'Enroscá un regatón C y un espárrago B en un caño largo 3.',
+    ], [manta(), ...pata('M'), ...esparrago()], {
+      usa: ['3 · Caño largo', 'C · Regatón', 'B · Espárrago'], hw: { C: 1, B: 1 },
+      titular: 'Regatón abajo, espárrago arriba', resaltar: ['pata.M', 'esparrago'], unir: ['cano.M'],
+      mueven: [mover('pata.M', 50, [0, 0, -1], 0), mover('esparrago', 70, [0, 0, 1], .4)], zoom: .45,
+      vista: { yaw: -24, pitch: 22 },
+    }),
+    paso(2, 'manija', 'La chapa y el caño corto', [
+      'Pasá el espárrago por uno de los agujeros de la chapa 2.',
+      'Por arriba, enroscá el caño corto 1: es la manija.',
     ], [manta(), ...pata('M'), ...esparrago(), ...chapa(), ...manija()], {
-      usa: ['6 · Patas plásticas ×3', '2 · Espárrago', '3 · Chapa', '1 · Caño 9 cm'], hw: { '6': 3, '2': 1 },
-      titular: 'La manija, arriba de la chapa', resaltar: ['pata.M', 'esparrago', 'chapa', 'manija'], unir: ['cano.M'],
-      subs: { a: ['Enroscá una pata plástica en un extremo de cada caño de 41,5 cm.', 'En uno de esos caños, enroscá el espárrago del otro lado.', 'Pasalo por un agujero de la chapa y, por arriba, enroscá el caño de 9 cm.'], b: [], tip: 'Por ahora la chapa queda apoyada en una sola pata: sostenela mientras enroscás la manija.' },
-      mueven: [mover('pata.M', 50, [0, 0, -1], 0), mover('esparrago', 70, [0, 0, 1], .4), mover('chapa', 120, [0, 0, 1], .8), mover(['manija', 'manija.aro', 'manija.tapa'], 160, [0, 0, 1], 1.2)],
+      usa: ['2 · Chapa', '1 · Caño corto'], titular: 'La manija, arriba de la chapa', resaltar: ['chapa', 'manija'], unir: ['cano.M', 'esparrago'],
+      subs: { a: ['Pasá el espárrago por uno de los agujeros de la chapa 2.', 'Por arriba, enroscá el caño corto 1: es la manija.'], b: [], tip: 'Por ahora la chapa queda apoyada en una sola pata: sostenela mientras enroscás.' },
+      mueven: [mover('chapa', 120, [0, 0, 1], 0), mover(['manija', 'manija.aro', 'manija.tapa'], 160, [0, 0, 1], .5)],
       vista: { yaw: -24, pitch: 24 },
     }),
-    paso(2, 'patas', 'Las otras dos patas', [
-      'Ubicá los dos caños que quedan debajo de los otros dos agujeros.',
-      'Pasá un tornillo Allen por cada agujero desde arriba, sin apretar.',
-    ], [manta(), ...mesa()], {
-      usa: ['5 · Caños ×2', '4 · Tornillos Allen ×2'], hw: { '4': 2 },
-      titular: 'Agujero sobre caño', resaltar: ['cano.A', 'cano.B', 'pata.A', 'pata.B', 'T.A', 'T.B'], unir: ['chapa'],
-      mueven: [mover(['cano.A', 'pata.A'], 140, [0, 0, -1], 0), mover(['cano.B', 'pata.B'], 140, [0, 0, -1], .3), mover(['T.A', 'T.B'], 80, [0, 0, 1], .8)],
-      vista: { yaw: -30, pitch: 22 },
+    paso(3, 'regatones', 'Regatón en las otras dos patas', [
+      'Enroscá un regatón C en un extremo de los dos caños largos que quedan.',
+    ], [manta(), ...pata('A'), ...pata('B')], {
+      usa: ['3 · Caños largos ×2', 'C · Regatones ×2'], hw: { C: 2 }, titular: 'Un regatón en cada caño', resaltar: ['pata.A', 'pata.B'], unir: ['cano.A', 'cano.B'],
+      mueven: [mover(['pata.A', 'pata.B'], 50, [0, 0, -1], 0)], vista: { yaw: -24, pitch: 26 },
     }),
-    paso(3, 'ajustar', 'Ajustá con la llave', [
-      'Ajustá los dos tornillos con la llave Allen.',
+    paso(4, 'patas', 'Las patas, a la chapa', [
+      'Ubicá cada caño debajo de uno de los agujeros libres de la chapa.',
     ], [manta(), ...mesa()], {
-      usa: ['7 · Llave Allen'], titular: 'Que quede firme', sinFantasma: true, resaltar: ['T'],
-      subs: { a: ['Ajustá los dos tornillos con la llave Allen.'], b: ['Apretalos hasta que la mesita quede firme.', 'Revisá que apoye bien en sus tres patas.'], tip: 'Si queda un poco torcida, aflojá, enderezá las patas y volvé a ajustar.' },
-      mueven: [mover('T', 6, [0, 0, 1], 0)],
+      usa: ['A · Tornillos Allen ×2', 'D · Llave Allen'], hw: { A: 2 },
+      titular: 'Agujero sobre caño', resaltar: ['cano.A', 'cano.B', 'pata.A', 'pata.B', 'T.A', 'T.B'], unir: ['chapa'],
+      subs: { a: ['Ubicá cada caño debajo de uno de los agujeros libres de la chapa.'], b: ['Poné un tornillo A en cada agujero, desde arriba.', 'Ajustalos con la llave Allen.'], tip: 'Si queda un poco torcida, aflojá, enderezá las patas y volvé a ajustar.' },
+      mueven: [mover(['cano.A', 'pata.A'], 140, [0, 0, -1], 0), mover(['cano.B', 'pata.B'], 140, [0, 0, -1], .3), mover(['T.A', 'T.B'], 80, [0, 0, 1], .8)],
       fases: {
-        pieza: ['T.A.cabeza', 'T.B.cabeza'], hw: ['T.A.cabeza', 'T.A.hex', 'T.B.cabeza'], retener: ['T'], ocultarEnA: [],
+        pieza: ['cano.A', 'pata.A', 'cano.B', 'pata.B'], hw: ['T.A.cana', 'T.A.cabeza', 'T.A.hex', 'T.B.cana', 'T.B.cabeza', 'T.B.hex'], retener: ['T.A+T.B'], ocultarEnA: ['T.A.cana', 'T.A.cabeza', 'T.A.hex', 'T.B.cana', 'T.B.cabeza', 'T.B.hex'],
         ref: 'T.A', vistaB: { yaw: -24, pitch: 58 }, titularB: 'Con la llave Allen',
         herramienta: { tipo: 'allen', pos: [...P.A, Z_MANIJA + 3] },
       },
-      vista: { yaw: -24, pitch: 22 },
+      vista: { yaw: -30, pitch: 22 },
+    }),
+    paso(5, 'revisar', 'Revisá que esté firme', [
+      'Repasá los dos tornillos con la llave.',
+      'Revisá que apoye bien en sus tres patas.',
+    ], [manta(), ...mesa()], {
+      usa: ['D · Llave Allen'], titular: 'Que no se mueva nada', sinFantasma: true, resaltar: ['T'], vista: { yaw: -26, pitch: 18 },
     }),
     { id: 'fin', grupo: 'Listo', vista: { yaw: -22, pitch: 16 }, piezas: mesa(), mueven: [] },
   ],

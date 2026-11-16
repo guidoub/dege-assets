@@ -1,11 +1,3 @@
-// CH36 · Zapatero de entrada.
-// Fuentes: "Manual de Armado CH36.pdf" (Drive, 8 p.), "Ficha Técnica CH36.pdf" (plano acotado: 60 × 30 × 33 cm,
-// estante a 15 cm del piso y 16 cm libres hasta la tapa) y fotos de la web (negro y hueso).
-// mm · Z arriba · piso z = 0 · adelante = +Y (con la cámara de frente, +X queda a la izquierda). Ver estudio/ch36-notas.md.
-//
-// Cuatro patas en las esquinas, cada una de dos caños iguales (×8) unidos por un espárrago que atraviesa la oreja del
-// ángulo. Los dos ángulos van a los costados (a lo largo del fondo): ala de arriba con las orejas, ala vertical hacia
-// abajo y hacia adentro, donde se atornillan las 4 barras con tornillos Phillips. Arriba, la chapa con 4 tornillos Allen.
 
 const XL = 285, YL = 135;                // centro de cada pata (a 1,5 cm de los bordes de la tapa)
 const TAPA_W = 600, TAPA_D = 300, CHAPA = 2.5, R_CANO = 11, L_CANO = 155, REG = 12;
@@ -27,7 +19,6 @@ const LADOS = { n: -1, p: 1 };
 const cil = (id, pos, largo, r, mat = 'chapa', extra = {}) => ({ id, tipo: 'cilindro', pos, s0: 0, s1: largo, r, mat, seg: 28, ...extra });
 const caja = (id, x0, x1, y0, y1, z0, alto, mat = 'chapa') => ({ id, tipo: 'perfil', puntos: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], pos: [0, 0, z0], z0: 0, z1: alto, mat });
 
-// oreja + ala de arriba: tira de 25 mm a lo largo del fondo, con puntas redondeadas y un agujero en cada punta
 function alaArriba(sx) {
   const pts = [], n = 24, cx = sx * XL;
   for (let k = 0; k <= n; k++) { const a = Math.PI * k / n; pts.push([cx + OREJA * Math.cos(a), YL + OREJA * Math.sin(a)]); }
@@ -43,7 +34,6 @@ const angulo = (s, dz = 0) => {
   ];
 };
 const barras = (dz = 0) => YB.map((y, i) => cil('barra.' + i, [-XB, y, Z_BARRA + dz], 2 * XB, R_BARRA, 'chapa', { eje: [1, 0, 0] }));
-// tornillos B (Phillips): de afuera hacia adentro, atraviesan el ala y entran en la punta de la barra
 const tornillosB = (dz = 0) => Object.entries(LADOS).flatMap(([s, sx]) => YB.flatMap((y, i) => [
   cil(`B.${s}.${i}.cana`, [sx * XV, y, Z_BARRA + dz], 14, 2.2, 'zinc', { eje: [-sx, 0, 0], seg: 12 }),
   cil(`B.${s}.${i}.cabeza`, [sx * XV, y, Z_BARRA + dz], 2.5, 5, 'zinc', { eje: [sx, 0, 0], seg: 20 }),
@@ -77,7 +67,6 @@ const ordenPiezas = () => [
   { id: 'rotulo.1', tipo: 'texto', txt: '1 · CHAPA SUPERIOR', pos: [-200, 385, .3], alto: 32 },
   ...YB.map((y, i) => acostado('pz.3.' + i, -380, -90 - i * 50, 2 * XB, R_BARRA)),
   { id: 'rotulo.3', tipo: 'texto', txt: '3 · CAÑOS LARGOS ×4', pos: [-110, -320, .3], alto: 30 },
-  // los dos ángulos, apoyados como quedan armados (orejas arriba)
   ...['n', 'p'].flatMap((s, j) => angulo(s, -(Z_ANG - ALA + ESP_ANG)).map((p) => ({ ...p, id: `pz.2.${j}.${p.id.split('.')[2]}`,
     pos: [p.pos[0] + (s === 'n' ? XL + 300 : -XL + 360), p.pos[1] - 150, p.pos[2]] }))),
   { id: 'rotulo.2', tipo: 'texto', txt: '2 · ÁNGULOS ×2', pos: [330, -330, .3], alto: 30 },

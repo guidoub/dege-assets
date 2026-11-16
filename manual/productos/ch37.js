@@ -1,15 +1,7 @@
-// CH37 · Mesa de arrime XL multiuso.
-// Fuentes: "Manual de Armado CH37.pdf" (Drive, 6 p.), ficha de la web (tapa 50 × 30 cm, alto 66 cm, base 37 × 25 cm)
-// y fotos de la ficha. mm · Z arriba · piso z = 0 · adelante = +Y (con la cámara de frente, +X queda a la izquierda).
-// Ver estudio/ch37-notas.md.
-//
-// Forma de C: los dos caños van juntos, cerca de la punta de la manija; la tapa y la base salen hacia el otro lado
-// (así se mete debajo del sillón). Se arma boca abajo: la tapa apoyada en la manta.
 
 const H = 660;                         // alto total
 const TAPA = 3, BASE = 5;
 const XC = 85, R_CANO = 12.5;
-// Los dos caños van uno al lado del otro sobre el eje largo (fotos y agujeros de la base en el manual).
 const CANOS = [[XC + 31, 0], [XC - 31, 0]];
 const TOPES = [[175, -92], [175, 92], [-150, -92], [-150, 92]];
 
@@ -18,7 +10,6 @@ const placa = (id, pos, w, d, h, r, extra = {}) => ({ id, tipo: 'perfil', forma:
 
 const tapa = () => [
   placa('tapa', [0, 0, H - TAPA], 500, 300, TAPA, 85, { huecos: [{ x: 205, y: 0, w: 26, d: 95, r: 13 }] }),
-  // salientes roscados debajo de la tapa, donde se enroscan los caños
   ...CANOS.map(([x, y], i) => cil('tapa.saliente.' + i, [x, y, H - TAPA], 14, 4, 'zinc', { eje: [0, 0, -1], seg: 14 })),
 ];
 const canos = () => CANOS.map(([x, y], i) => cil('cano.' + i, [x, y, BASE], H - TAPA - BASE, R_CANO));
@@ -27,20 +18,16 @@ const base = (marcas = false) => [
   ...TOPES.map(([x, y], i) => cil('base.tope.' + i, [x, y, -1.5], 1.5, 9, 'negro', { seg: 20 })),
   ...(marcas ? CANOS.map(([x, y], i) => cil('base.agujero.' + i, [x, y, -.2], .2, 3.5, 'oscuro', { sinContorno: true, sinAristas: true })) : []),
 ];
-// Tornillo A: fresado Phillips, desde abajo de la base hacia el caño.
 const tornillos = () => CANOS.flatMap(([x, y], i) => [
   cil(`A.${i}.cana`, [x, y, -.5], 16, 3, 'zinc', { seg: 14 }),
   cil(`A.${i}.cabeza`, [x, y, -.7], .4, 5.5, 'zinc', { seg: 20 }),
 ]);
 const mesa = () => [...tapa(), ...canos(), ...base(), ...tornillos()];
-// Media vuelta sobre Y: la tapa queda apoyada en la manta (z = 0).
 const bocaAbajo = (ps) => ps.map((p) => ({ ...p, pos: [-p.pos[0], p.pos[1], H - p.pos[2]], eje: (p.eje || [0, 0, 1]).map((v, i) => (i === 1 ? v : -v)), rotacion: p.tipo === 'perfil' ? [0, 180, 0] : p.rotacion }));
-// Los perfiles se dan vuelta con `rotacion` (el eje Z se invierte): corrijo la altura para que la placa ocupe el mismo lugar.
 const voltear = (ps) => bocaAbajo(ps).map((p) => (p.tipo === 'perfil' ? { ...p, eje: undefined, pos: [p.pos[0], p.pos[1], p.pos[2]] } : p));
 
 const manta = (w = 760, d = 560) => ({ id: 'manta', tipo: 'manta', w, d, r: 22, mat: 'carton', pos: [0, 0, 0] });
 
-// ── «Ordená las piezas» ──
 const ordenPiezas = () => [
   { ...manta(1260, 760), pos: [30, 0, 0] },
   placa('pz.1', [-280, 130, 0], 500, 300, TAPA, 85, { huecos: [{ x: 205, y: 0, w: 26, d: 95, r: 13 }] }),
